@@ -29,7 +29,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "docs:check": "markdownlint-cli2 && node scripts/check-docs.mjs && node scripts/check-public-content.mjs",
+    "docs:check": "markdownlint-cli2 && node scripts/check-docs.mjs && node scripts/check-external-links.mjs --self-test && node scripts/check-public-content.mjs",
     "archive:check": "node scripts/check-archive-append-only.mjs",
     "actions:check": "node scripts/check-actions.mjs",
     "version:check": "node scripts/check-version.mjs",

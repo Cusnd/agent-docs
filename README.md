@@ -2,6 +2,10 @@
 
 [简体中文](README.zh-CN.md)
 
+[![CI](https://github.com/Cusnd/agent-docs/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Cusnd/agent-docs/actions/workflows/ci.yml)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/Cusnd/agent-docs/badge)](https://securityscorecards.dev/viewer/?uri=github.com/Cusnd/agent-docs)
+[![Community profile: 100%](https://img.shields.io/badge/community%20profile-100%25-brightgreen)](https://github.com/Cusnd/agent-docs/community)
+
 Agent Docs is an unofficial, community-maintained Codex plugin that keeps compact requirements, verification evidence, Work Sessions, and durable decisions inside a Git repository. It is not an OpenAI product and is not endorsed by OpenAI.
 
 The plugin is hook-only. It registers `UserPromptSubmit`, `SubagentStart`, and `Stop`; it does not register a Skill or a `SessionStart` hook. Its runtime is built entirely on Node.js standard-library APIs and has zero third-party runtime dependencies.

@@ -2,6 +2,10 @@
 
 [English](README.md)
 
+[![CI](https://github.com/Cusnd/agent-docs/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Cusnd/agent-docs/actions/workflows/ci.yml)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/Cusnd/agent-docs/badge)](https://securityscorecards.dev/viewer/?uri=github.com/Cusnd/agent-docs)
+[![Community Profile：100%](https://img.shields.io/badge/community%20profile-100%25-brightgreen)](https://github.com/Cusnd/agent-docs/community)
+
 Agent Docs 是一个非官方、由社区维护的 Codex 插件，用 Git 仓库内紧凑且可复核的文档保存 Requirement、验证证据、Work Session 和持久决策。它不是 OpenAI 产品，也未获得 OpenAI 官方背书。
 
 本插件只使用 hooks：注册 `UserPromptSubmit`、`SubagentStart` 和 `Stop`，不注册 Skill，也不注册 `SessionStart` hook。运行时只使用 Node.js 标准库，第三方运行时依赖为零。

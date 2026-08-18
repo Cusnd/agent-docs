@@ -15,6 +15,7 @@
 - 双语用户、贡献、治理、安全、架构、运营、故障排查与发布文档。
 - 跨平台 Node.js 22/24/26 CI、CodeQL、dependency review、Scorecard、秘密检查、Dependabot、确定性打包、校验和与 artifact attestation 工作流。
 - 明确的 Marketplace ZIP allowlist、同机字节级复现、跨 OS digest 比对，以及隔离 `CODEX_HOME` 安装冒烟测试。
+- 仅在远端结果验证后添加 CI、OpenSSF Scorecard 与 Community Profile 徽章。
 
 ### 变更
 
@@ -23,6 +24,7 @@
 - hook 热路径只哈希控制文档并读取 worktree 索引；完整历史扫描只在显式 validate 与 CI 中运行。
 - 公开定位明确区分 model-independent 协议、CI 已验证组合、已观察交互组合和未验证组合。
 - 仓库包含关系允许 Windows 8.3 路径、macOS `/var` 链接等操作系统规范别名，同时仍拒绝链接子目录和仓库根之外的路径。
+- 外链提取现在会在 Markdown 代码分隔符处停止，并由离线自测覆盖。
 
 ### 安全
 

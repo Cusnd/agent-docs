@@ -15,6 +15,7 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 - Bilingual user, contributor, governance, security, architecture, operations, troubleshooting, and release documentation.
 - Cross-platform Node.js 22/24/26 CI, CodeQL, dependency review, Scorecard, secret checks, Dependabot, deterministic packaging, checksum, and artifact-attestation workflows.
 - Explicit Marketplace ZIP allowlist, same-machine byte reproducibility checks, cross-OS digest comparison, and isolated `CODEX_HOME` installation smoke tests.
+- CI, OpenSSF Scorecard, and Community Profile badges added only after their remote results were verified.
 
 ### Changed
 
@@ -23,6 +24,7 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 - Hook hot paths hash only control documents and consult the worktree index; full history scanning belongs to explicit validation and CI.
 - Public positioning now distinguishes model-independent protocol behavior, CI-verified combinations, observed interactive use, and unverified combinations.
 - Repository containment accepts canonical operating-system aliases such as Windows 8.3 paths and macOS `/var` links while still rejecting linked descendants and paths outside the root.
+- External-link extraction now stops at Markdown code delimiters and is covered by an offline self-test.
 
 ### Security
 
