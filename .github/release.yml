@@ -1,0 +1,20 @@
+changelog:
+  exclude:
+    labels:
+      - "status:needs-triage"
+  categories:
+    - title: Security
+      labels:
+        - security
+    - title: Documentation
+      labels:
+        - "type:docs"
+    - title: Enhancements
+      labels:
+        - "type:enhancement"
+    - title: Fixes
+      labels:
+        - "type:bug"
+    - title: Other changes
+      labels:
+        - "*"

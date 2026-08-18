@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "initialized_at": "{{INITIALIZED_AT}}",
+  "generator": "agent-docs",
+  "generator_version": "0.2.0"
+}

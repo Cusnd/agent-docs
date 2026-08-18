@@ -1,0 +1,30 @@
+{
+  "name": "agent-docs",
+  "version": "0.2.0",
+  "description": "Hook-only repository memory for verifiable requirements, Work Sessions, receipts, and durable decisions.",
+  "author": {
+    "name": "liuso",
+    "url": "https://github.com/Cusnd"
+  },
+  "homepage": "https://github.com/Cusnd/agent-docs",
+  "repository": "https://github.com/Cusnd/agent-docs",
+  "license": "MIT",
+  "keywords": ["codex", "hooks", "agent-memory", "documentation"],
+  "interface": {
+    "displayName": "Agent Docs",
+    "shortDescription": "Maintain compact repository handoff records.",
+    "longDescription": "Keep current requirements, verified outcomes, Work Sessions, and costly-to-reverse decisions under docs/agent without placing the protocol in AGENTS.md.",
+    "developerName": "liuso",
+    "category": "Productivity",
+    "capabilities": [
+      "Repository requirements",
+      "Completion evidence",
+      "Work Session handoff",
+      "Durable decisions"
+    ],
+    "websiteURL": "https://github.com/Cusnd/agent-docs",
+    "defaultPrompt": [
+      "Use Agent Docs hooks to maintain this repository's requirements, evidence, Work Sessions, receipts, and durable decisions."
+    ]
+  }
+}

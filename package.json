@@ -1,0 +1,55 @@
+{
+  "name": "agent-docs",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "A hook-only community Codex plugin for compact, verifiable repository handoff records.",
+  "license": "MIT",
+  "author": {
+    "name": "liuso",
+    "url": "https://github.com/Cusnd"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cusnd/agent-docs.git"
+  },
+  "homepage": "https://github.com/Cusnd/agent-docs#readme",
+  "bugs": {
+    "url": "https://github.com/Cusnd/agent-docs/issues"
+  },
+  "engines": {
+    "node": "^22.0.0 || ^24.0.0 || ^26.0.0"
+  },
+  "workspaces": [
+    "plugins/agent-docs"
+  ],
+  "scripts": {
+    "check": "npm run check:syntax && npm run lint && npm run format:check && npm run docs:check && npm run actions:check && npm run version:check && npm run plugin:validate && npm run validate:project",
+    "check:syntax": "node scripts/check-syntax.mjs",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "docs:check": "markdownlint-cli2 && node scripts/check-docs.mjs && node scripts/check-public-content.mjs",
+    "archive:check": "node scripts/check-archive-append-only.mjs",
+    "actions:check": "node scripts/check-actions.mjs",
+    "version:check": "node scripts/check-version.mjs",
+    "plugin:validate": "node scripts/check-plugin.mjs",
+    "validate:project": "node plugins/agent-docs/scripts/agent-docs.mjs validate",
+    "test": "npm --workspace @cusnd/agent-docs-plugin test",
+    "test:base": "npm --workspace @cusnd/agent-docs-plugin run test:base",
+    "test:concurrent": "npm --workspace @cusnd/agent-docs-plugin run test:concurrent",
+    "test:performance": "npm --workspace @cusnd/agent-docs-plugin run test:performance",
+    "test:coverage": "npm --workspace @cusnd/agent-docs-plugin run test:coverage",
+    "release:build": "node scripts/build-release.mjs",
+    "release:verify": "node scripts/verify-release.mjs",
+    "release:smoke": "node scripts/smoke-install.mjs",
+    "quality": "npm run check && npm test"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "eslint": "10.8.1",
+    "fflate": "0.8.3",
+    "markdownlint-cli2": "0.23.2",
+    "prettier": "3.9.6"
+  }
+}

@@ -1,0 +1,7 @@
+node_modules/
+dist/
+coverage/
+plugins/agent-docs/tests/.work/
+package-lock.json
+docs/agent/
+plugins/agent-docs/protocol/assets/templates/

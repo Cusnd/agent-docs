@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Usage questions / 使用问答
+    url: https://github.com/Cusnd/agent-docs/discussions
+    about: Ask for help or discuss an idea before filing an Issue. / 获取帮助或先讨论想法。
+  - name: Private security report / 私密漏洞报告
+    url: https://github.com/Cusnd/agent-docs/security/advisories/new
+    about: Never disclose vulnerabilities in a public Issue. / 不得在公开 Issue 披露漏洞。

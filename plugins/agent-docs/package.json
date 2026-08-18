@@ -1,0 +1,33 @@
+{
+  "name": "@cusnd/agent-docs-plugin",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Hook-only Agent Docs mechanics and protocol for Codex repositories.",
+  "license": "MIT",
+  "author": {
+    "name": "liuso",
+    "url": "https://github.com/Cusnd"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cusnd/agent-docs.git",
+    "directory": "plugins/agent-docs"
+  },
+  "homepage": "https://github.com/Cusnd/agent-docs#readme",
+  "bugs": {
+    "url": "https://github.com/Cusnd/agent-docs/issues"
+  },
+  "engines": {
+    "node": "^22.0.0 || ^24.0.0 || ^26.0.0"
+  },
+  "scripts": {
+    "check": "node --check scripts/agent-docs.mjs",
+    "test": "npm run test:base && npm run test:concurrent",
+    "test:base": "node --test --test-concurrency=1",
+    "test:concurrent": "node tests/concurrent-suites.mjs",
+    "test:performance": "node tests/performance.mjs",
+    "test:coverage": "node --test --test-concurrency=1 --experimental-test-coverage",
+    "validate:fixture": "node scripts/agent-docs.mjs validate"
+  }
+}

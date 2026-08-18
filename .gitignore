@@ -1,0 +1,9 @@
+node_modules/
+*.zip
+work/
+dist/
+coverage/
+.nyc_output/
+plugins/agent-docs/tests/.work/
+*.tmp
+*.log

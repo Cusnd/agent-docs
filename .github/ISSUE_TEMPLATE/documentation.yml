@@ -1,0 +1,33 @@
+name: Documentation request / 文档请求
+description: Report missing, incorrect, or unclear documentation. / 报告缺失、错误或不清晰文档。
+title: "[Docs]: "
+labels:
+  - "type:docs"
+  - "status:needs-triage"
+body:
+  - type: input
+    id: location
+    attributes:
+      label: Document and section / 文档与章节
+      description: Use a public URL or repository-relative path. / 使用公开 URL 或仓库相对路径。
+    validations:
+      required: true
+  - type: textarea
+    id: issue
+    attributes:
+      label: What is missing or incorrect? / 缺失或错误内容
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Desired reader outcome / 期望读者结果
+    validations:
+      required: true
+  - type: checkboxes
+    id: bilingual
+    attributes:
+      label: Language pairing / 双语配对
+      options:
+        - label: I checked whether the issue affects both English and Chinese documents. / 我已检查是否同时影响英中文档。
+          required: true

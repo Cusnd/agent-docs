@@ -1,0 +1,20 @@
+{
+  "globs": [
+    "**/*.md",
+    "!node_modules/**",
+    "!dist/**",
+    "!coverage/**",
+    "!plugins/agent-docs/tests/.work/**",
+    "!plugins/agent-docs/protocol/assets/templates/**",
+  ],
+  "config": {
+    "default": true,
+    "MD013": false,
+    "MD024": false,
+    "MD026": false,
+    "MD034": false,
+    "MD033": false,
+    "MD041": false,
+    "MD060": false,
+  },
+}

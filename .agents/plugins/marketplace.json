@@ -1,0 +1,20 @@
+{
+  "name": "agent-docs",
+  "interface": {
+    "displayName": "Agent Docs Community"
+  },
+  "plugins": [
+    {
+      "name": "agent-docs",
+      "source": {
+        "source": "local",
+        "path": "./plugins/agent-docs"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

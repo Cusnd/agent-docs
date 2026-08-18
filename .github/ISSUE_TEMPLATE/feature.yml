@@ -1,0 +1,37 @@
+name: Feature request / 功能请求
+description: Propose a scoped, testable change. / 提议边界明确且可测试的变更。
+title: "[Feature]: "
+labels:
+  - "type:enhancement"
+  - "status:needs-triage"
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / 问题
+      description: What outcome is difficult today, and for whom? / 当前什么结果难以实现，影响谁？
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed outcome / 建议结果
+      description: Include observable acceptance criteria, not only implementation steps. / 给出可观察验收标准，而不只是实现步骤。
+    validations:
+      required: true
+  - type: textarea
+    id: compatibility
+    attributes:
+      label: Compatibility and security / 兼容与安全
+      description: Note CLI, hooks, Node.js, runtime dependency, privacy, and release effects. / 说明 CLI、hook、Node、依赖、隐私和发布影响。
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Checks / 确认
+      options:
+        - label: I searched existing Issues and Discussions. / 我已搜索现有 Issue 与 Discussion。
+          required: true
+        - label: I understand that requests are handled best effort with no SLA. / 我理解项目仅 best effort 且无 SLA。
+          required: true
