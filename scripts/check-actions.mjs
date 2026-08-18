@@ -20,6 +20,17 @@ for (const file of workflows) {
     if (!/@[0-9a-f]{40}$/u.test(value))
       errors.push(`${file}: action is not pinned to a full SHA: ${value}`);
   }
+  for (const match of content.matchAll(
+    /^\s*-\s+run:\s+node scripts\/compare-release-artifacts\.mjs\b/gmu,
+  )) {
+    const preceding = content.slice(0, match.index);
+    const jobStarts = [...preceding.matchAll(/^ {2}[a-zA-Z0-9_-]+:\s*$/gmu)];
+    const jobStart = jobStarts.at(-1)?.index ?? 0;
+    const job = preceding.slice(jobStart);
+    if (!/^\s*-\s+run:\s+npm ci\s*$/mu.test(job)) {
+      errors.push(`${file}: release artifact comparison job must install locked dependencies`);
+    }
+  }
 }
 if (errors.length) {
   console.error(errors.join("\n"));

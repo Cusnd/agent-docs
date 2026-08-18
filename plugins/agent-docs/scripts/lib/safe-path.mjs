@@ -12,13 +12,14 @@ export function isPathWithin(parent, child) {
 }
 
 export async function assertSafeRepositoryPath(repoRoot, target) {
-  const canonicalRoot = await realpath(repoRoot);
+  const absoluteRoot = path.resolve(repoRoot);
   const absoluteTarget = path.resolve(target);
-  if (!isPathWithin(canonicalRoot, absoluteTarget)) {
+  if (!isPathWithin(absoluteRoot, absoluteTarget)) {
     throw new Error(`Unsafe repository path escapes the repository root: ${absoluteTarget}`);
   }
 
-  const relative = path.relative(canonicalRoot, absoluteTarget);
+  const canonicalRoot = await realpath(absoluteRoot);
+  const relative = path.relative(absoluteRoot, absoluteTarget);
   let current = canonicalRoot;
   for (const part of relative.split(path.sep).filter(Boolean)) {
     current = path.join(current, part);

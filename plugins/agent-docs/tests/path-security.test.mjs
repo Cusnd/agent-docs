@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { after, before, test } from "node:test";
 import { cp, mkdir, readFile, readdir, rm, symlink, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { assertSafeRepositoryPath } from "../scripts/lib/safe-path.mjs";
 import { cleanupWork, createRepo, jsonOutput, resetWork, runCli, workRoot } from "./helpers.mjs";
 
 before(resetWork);
@@ -10,6 +11,20 @@ after(cleanupWork);
 async function linkDirectory(target, link) {
   await symlink(target, link, process.platform === "win32" ? "junction" : "dir");
 }
+
+test("accepts a repository root reached through an operating-system path alias", async () => {
+  const physicalRoot = path.join(workRoot, "path-root-physical");
+  const aliasRoot = path.join(workRoot, "path-root-alias");
+  const target = path.join(aliasRoot, "docs", "agent");
+  await mkdir(path.join(physicalRoot, "docs", "agent"), { recursive: true });
+  await linkDirectory(physicalRoot, aliasRoot);
+
+  assert.equal(await assertSafeRepositoryPath(aliasRoot, target), path.resolve(target));
+  await assert.rejects(
+    assertSafeRepositoryPath(aliasRoot, path.join(workRoot, "outside-root-alias")),
+    /escapes the repository root/i,
+  );
+});
 
 test("refuses initialization when docs/agent is a symlink or junction", async () => {
   const repo = await createRepo("path-agent-link");

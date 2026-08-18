@@ -22,6 +22,7 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 - Log Health now uses one immutable file per event instead of concurrent JSONL read-modify-write.
 - Hook hot paths hash only control documents and consult the worktree index; full history scanning belongs to explicit validation and CI.
 - Public positioning now distinguishes model-independent protocol behavior, CI-verified combinations, observed interactive use, and unverified combinations.
+- Repository containment accepts canonical operating-system aliases such as Windows 8.3 paths and macOS `/var` links while still rejecting linked descendants and paths outside the root.
 
 ### Security
 
