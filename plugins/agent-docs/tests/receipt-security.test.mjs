@@ -13,7 +13,14 @@ import {
   workRoot,
 } from "./helpers.mjs";
 import { hashAgentDocs, inspectRepository } from "../scripts/lib/repo.mjs";
-import { loadReceipt, metadataRoot, receiptPath, resolveReceipt } from "../scripts/lib/state.mjs";
+import {
+  acquireRequirementsLock,
+  loadReceipt,
+  metadataRoot,
+  receiptPath,
+  releaseRequirementsLock,
+  resolveReceipt,
+} from "../scripts/lib/state.mjs";
 
 before(resetWork);
 after(cleanupWork);
@@ -226,6 +233,30 @@ test("serializes competing terminal Receipt transitions so only one can win", as
   );
   const persisted = await loadReceipt(repo, TURN_ID);
   assert.ok(["S-20260818-120001-AAAA", "S-20260818-120002-BBBB"].includes(persisted.session));
+});
+
+test("waits through bounded live-lock contention before mutating a Receipt", async () => {
+  const directory = await createRepo("receipt-live-lock-contention");
+  run(process.execPath, [cli, "hook", "user-prompt-submit"], {
+    cwd: directory,
+    input: JSON.stringify({ cwd: directory, session_id: "live-lock", turn_id: TURN_ID }),
+  });
+  const repo = await inspectRepository(directory);
+  const held = await acquireRequirementsLock(repo, "delayed-writer");
+  assert.equal(held.acquired, true);
+  const delayedRelease = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      releaseRequirementsLock(repo, held.owner, held.token).then(resolve, reject);
+    }, 700);
+  });
+
+  let resolved;
+  try {
+    resolved = await resolveReceipt(repo, TURN_ID, "not-material");
+  } finally {
+    await delayedRelease;
+  }
+  assert.equal(resolved.state, "not-material");
 });
 
 test("requires a material Agent Docs change before closing a Receipt", async () => {

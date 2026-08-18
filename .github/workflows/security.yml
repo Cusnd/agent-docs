@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   codeql:
-    name: codeql
+    name: Security / codeql
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -40,7 +40,7 @@ jobs:
         uses: github/codeql-action/analyze@ff2f1c621b7f889edc0d3c761ac2e6a3f8cdb0dd # v4
 
   dependency-review:
-    name: dependency-review
+    name: Security / dependency-review
     if: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     permissions:

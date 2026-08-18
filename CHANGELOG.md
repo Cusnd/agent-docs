@@ -22,12 +22,14 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 - Log Health now uses one immutable file per event instead of concurrent JSONL read-modify-write.
 - Hook hot paths hash only control documents and consult the worktree index; full history scanning belongs to explicit validation and CI.
 - Public positioning now distinguishes model-independent protocol behavior, CI-verified combinations, observed interactive use, and unverified combinations.
+- Repository containment accepts canonical operating-system aliases such as Windows 8.3 paths and macOS `/var` links while still rejecting linked descendants and paths outside the root.
 
 ### Security
 
 - Rejects malformed or path-like IDs before path construction.
 - Rejects symbolic links, junctions, reparse points, and paths resolving outside the repository before and after writes.
 - Prevents a stale lock owner from deleting a successor lock and prevents terminal Receipt rewrites or cross-worktree closure.
+- Waits for short-lived live-lock contention with bounded exponential backoff before returning a transient failure.
 - Adds a repository-specific public-content gate while keeping the generic Agent Docs validator suitable for private repositories.
 
 [0.2.0]: https://github.com/Cusnd/agent-docs/releases/tag/v0.2.0

@@ -7,6 +7,10 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const workflows = (await listRepositoryFiles(root)).filter((file) =>
   /^\.github\/workflows\/[^/]+\.ya?ml$/u.test(file),
 );
+const stableCheckNames = new Map([
+  [".github/workflows/ci.yml", ["CI / gate"]],
+  [".github/workflows/security.yml", ["Security / codeql", "Security / dependency-review"]],
+]);
 const errors = [];
 for (const file of workflows) {
   const content = await readFile(path.join(root, file), "utf8");
@@ -15,10 +19,27 @@ for (const file of workflows) {
   if (!/^permissions:(?:\s+read-all)?\s*$/mu.test(content)) {
     errors.push(`${file}: missing explicit top-level permissions`);
   }
+  const lines = content.split(/\r?\n/u).map((line) => line.trim());
+  for (const name of stableCheckNames.get(file) ?? []) {
+    if (!lines.includes(`name: ${name}`)) {
+      errors.push(`${file}: missing stable check name: ${name}`);
+    }
+  }
   for (const match of content.matchAll(/\buses:\s*([^\s#]+)/gu)) {
     const value = match[1];
     if (!/@[0-9a-f]{40}$/u.test(value))
       errors.push(`${file}: action is not pinned to a full SHA: ${value}`);
+  }
+  for (const match of content.matchAll(
+    /^\s*-\s+run:\s+node scripts\/compare-release-artifacts\.mjs\b/gmu,
+  )) {
+    const preceding = content.slice(0, match.index);
+    const jobStarts = [...preceding.matchAll(/^ {2}[a-zA-Z0-9_-]+:\s*$/gmu)];
+    const jobStart = jobStarts.at(-1)?.index ?? 0;
+    const job = preceding.slice(jobStart);
+    if (!/^\s*-\s+run:\s+npm ci\s*$/mu.test(job)) {
+      errors.push(`${file}: release artifact comparison job must install locked dependencies`);
+    }
   }
 }
 if (errors.length) {

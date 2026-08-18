@@ -22,12 +22,14 @@
 - Log Health 从并发读改写同一 JSONL 改为每个事件一个不可变文件。
 - hook 热路径只哈希控制文档并读取 worktree 索引；完整历史扫描只在显式 validate 与 CI 中运行。
 - 公开定位明确区分 model-independent 协议、CI 已验证组合、已观察交互组合和未验证组合。
+- 仓库包含关系允许 Windows 8.3 路径、macOS `/var` 链接等操作系统规范别名，同时仍拒绝链接子目录和仓库根之外的路径。
 
 ### 安全
 
 - 在路径拼接前拒绝畸形或路径形式的 ID。
 - 在写入前后拒绝符号链接、junction、reparse point 和解析到仓库外的路径。
 - 防止旧锁持有者删除后继锁，并阻止终态 Receipt 重写与跨 worktree 关闭。
+- 遇到短时活锁竞争时使用有界指数退避等待，超过边界后才返回瞬态失败。
 - 新增本仓库专用公开内容检查，同时保持通用 Agent Docs validator 适用于私有仓库。
 
 [0.2.0]: https://github.com/Cusnd/agent-docs/releases/tag/v0.2.0
