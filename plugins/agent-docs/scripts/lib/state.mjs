@@ -254,7 +254,8 @@ export async function findReceiptForHook(repo, input) {
 
 async function withReceiptMutationLock(repo, identity, action) {
   const owner = `receipt-${String(identity).toLowerCase()}-${randomBytes(6).toString("hex")}`;
-  for (let attempt = 0; attempt < 6; attempt += 1) {
+  const attempts = 16;
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
     const lock = await acquireRequirementsLock(repo, owner);
     if (lock.acquired) {
       try {
@@ -263,7 +264,7 @@ async function withReceiptMutationLock(repo, identity, action) {
         await releaseRequirementsLock(repo, owner, lock.token);
       }
     }
-    await sleep(20 * (attempt + 1));
+    await sleep(Math.min(25 * 2 ** attempt, 400));
   }
   const error = new Error("Requirements lock remained busy while updating the Turn Receipt.");
   error.code = "EBUSY";

@@ -29,6 +29,7 @@
 - 在路径拼接前拒绝畸形或路径形式的 ID。
 - 在写入前后拒绝符号链接、junction、reparse point 和解析到仓库外的路径。
 - 防止旧锁持有者删除后继锁，并阻止终态 Receipt 重写与跨 worktree 关闭。
+- 遇到短时活锁竞争时使用有界指数退避等待，超过边界后才返回瞬态失败。
 - 新增本仓库专用公开内容检查，同时保持通用 Agent Docs validator 适用于私有仓库。
 
 [0.2.0]: https://github.com/Cusnd/agent-docs/releases/tag/v0.2.0

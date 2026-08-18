@@ -29,6 +29,7 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 - Rejects malformed or path-like IDs before path construction.
 - Rejects symbolic links, junctions, reparse points, and paths resolving outside the repository before and after writes.
 - Prevents a stale lock owner from deleting a successor lock and prevents terminal Receipt rewrites or cross-worktree closure.
+- Waits for short-lived live-lock contention with bounded exponential backoff before returning a transient failure.
 - Adds a repository-specific public-content gate while keeping the generic Agent Docs validator suitable for private repositories.
 
 [0.2.0]: https://github.com/Cusnd/agent-docs/releases/tag/v0.2.0
