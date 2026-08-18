@@ -2,7 +2,7 @@
 
 [简体中文](release-verification.zh-CN.md)
 
-The local gate and pre-release remote-control gate are complete. This report remains incomplete until the published assets are read back; the release Requirement cannot become `Done` before then.
+Agent Docs v0.2.0 was published on 2026-08-18 after every local, repository-control, protected-check, and published-asset gate below completed successfully. This report records project evidence; it is not a third-party certification.
 
 ## Local gate
 
@@ -13,7 +13,7 @@ The local gate and pre-release remote-control gate are complete. This report rem
 | Two concurrent base suites, three rounds                                                    | Both pass in every round                           | Pass; all six complete 52-test processes                                                                                                                 |
 | 1,000 Sessions and 5,000 Receipts performance sample                                        | Hook p95 below 50% timeout; no timeout             | Pass; UserPromptSubmit p95 1,070.7 ms, Stop p95 1,071.8 ms, full validate 1,578.0 ms                                                                     |
 | Coverage output                                                                             | Generated for review; no arbitrary percentage gate | Pass; Node coverage: 88.06% lines, 63.10% branches, 92.90% functions                                                                                     |
-| Two deterministic local ZIP builds                                                          | Byte-identical                                     | Pass; 34 allowlisted files, 66,887 bytes, fixed metadata, SHA-256 `086bc5f8acc6ea1400b60c8e7b4946e65b3a61641a21a4b60a6276f20e2924c8`                     |
+| Two deterministic local release-candidate ZIP builds                                        | Byte-identical                                     | Pass; 34 allowlisted files, 66,887 bytes, fixed metadata, SHA-256 `086bc5f8acc6ea1400b60c8e7b4946e65b3a61641a21a4b60a6276f20e2924c8`                     |
 | Isolated `CODEX_HOME` install, hooks, and removal                                           | Pass without touching real configuration           | Pass with Codex CLI 0.147.0; marketplace add, plugin add/list, material/non-material hooks, Stop repair, plugin/marketplace removal; real home untouched |
 
 ## Pre-release remote gate
@@ -24,16 +24,22 @@ The local gate and pre-release remote-control gate are complete. This report rem
 - Collaborator readback: only `@Cusnd`, the owner and sole administrator.
 - Ruleset readback: protected [`main`](https://github.com/Cusnd/agent-docs/rules/21000773), [`v*` creation restricted to `@Cusnd`](https://github.com/Cusnd/agent-docs/rules/21000782), and immutable [`v*` tags](https://github.com/Cusnd/agent-docs/rules/21000787).
 - [PR #1](https://github.com/Cusnd/agent-docs/pull/1) passed the final [CI run](https://github.com/Cusnd/agent-docs/actions/runs/32162080649) and [Security run](https://github.com/Cusnd/agent-docs/actions/runs/32162080586), then squash-merged as `e600424`.
-- Community Profile API: 100%. Rules-enabled [Scorecard run](https://github.com/Cusnd/agent-docs/actions/runs/32163049236): 6.8, Scorecard v5.5.0, with no project threshold.
+- [PR #2](https://github.com/Cusnd/agent-docs/pull/2) passed the protected checks and squash-merged the verified badges and pre-release evidence as `569fb8a1544d0dfcb95552c953048df5be0e6b5f`.
+- Community Profile API: 100%. The final pre-tag [Scorecard run](https://github.com/Cusnd/agent-docs/actions/runs/32164767456) published a real score of 6.8 for commit `569fb8a1544d0dfcb95552c953048df5be0e6b5f` with Scorecard v5.5.0; the project claims no score threshold.
 - [OSPS Level 1 self-assessment](osps-baseline.md): all implementation controls `Met` or `Not applicable`; this is a project self-assessment, not certification.
-- The first [external-link run](https://github.com/Cusnd/agent-docs/actions/runs/32163046480) correctly found the not-yet-published v0.2.0 URL and exposed a Markdown backtick parsing defect. This pull request fixes and self-tests the parser; a successful post-release rerun is still required.
+- The first [external-link run](https://github.com/Cusnd/agent-docs/actions/runs/32163046480) correctly found the not-yet-published v0.2.0 URL and exposed a Markdown backtick parsing defect. PR #2 fixed and self-tested the parser; the post-release run is recorded below.
 
-## Remaining release-only evidence
+## Published release evidence
 
-- Protected badge/evidence pull request and squash merge.
-- Annotated immutable `v0.2.0` tag and successful Release workflow.
-- Release URL, ZIP and checksum assets, cross-OS matching SHA-256, and both GitHub artifact attestations.
-- Fresh download of remote assets, checksum and attestation verification, and final isolated installation smoke.
-- Successful post-release external-link run and final settings/release API readback.
+| Evidence                | Verified result                                                                                                                                                                                                                                                                                                                                       |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Immutable release input | Annotated tag [`v0.2.0`](https://github.com/Cusnd/agent-docs/releases/tag/v0.2.0) has tag-object SHA `f6c6d1dffdcf68f826c620d968870a524420280b` and targets commit `569fb8a1544d0dfcb95552c953048df5be0e6b5f`. The active tag rulesets permit only `@Cusnd` to create `v*` tags and give nobody an update or deletion bypass.                         |
+| Release workflow        | [Run 32165631144](https://github.com/Cusnd/agent-docs/actions/runs/32165631144) completed successfully: quality, all nine OS/Node test jobs, all three OS package jobs, and the attested publication job passed.                                                                                                                                      |
+| Published assets        | The non-draft, non-prerelease [Agent Docs v0.2.0 release](https://github.com/Cusnd/agent-docs/releases/tag/v0.2.0) contains only `agent-docs-marketplace-v0.2.0.zip` (67,231 bytes) and `SHA256SUMS` (100 bytes). The three package jobs agreed on ZIP SHA-256 `70723ad7eb654af02d36c73ca3ea35bda6a5a8043513cf66c5e847e42e65863a`.                    |
+| Remote download         | Fresh copies downloaded from the Release matched `SHA256SUMS`. The checksum file itself has SHA-256 `f79428e7c25ee45109a91c6df5036f0c0b037e1f7114c8c074f35de074465c06`. The repository verifier accepted the exact downloaded 34-file ZIP and rebuilt it byte-for-byte from tag sources.                                                              |
+| Artifact attestations   | `gh attestation verify` accepted both downloaded assets while requiring repository `Cusnd/agent-docs`, workflow `.github/workflows/release.yml`, source ref `refs/tags/v0.2.0`, source commit `569fb8a1544d0dfcb95552c953048df5be0e6b5f`, and GitHub-hosted runners. Both statements use SLSA provenance v1 and contain the exact subject digests.    |
+| Isolated installation   | `npm run release:smoke` passed against the downloaded ZIP with Codex CLI 0.147.0 in a disposable child-only `CODEX_HOME`: marketplace add, plugin install/list/readback, initialization, material and non-material Receipts, Stop repair, and removal all passed. The active user configuration was not read or modified.                             |
+| Post-release links      | Manual [Links run 32166550406](https://github.com/Cusnd/agent-docs/actions/runs/32166550406) completed successfully against the published URLs.                                                                                                                                                                                                       |
+| Final remote readback   | GitHub API readback reconfirmed public visibility, `main`, Community Profile 100%, Issues/Discussions, disabled Wiki/Projects, squash-only merge, read-only Actions token, PVR, Dependabot security updates, secret scanning and push protection, all three active rulesets, the annotated tag, successful Release jobs, and the two uploaded assets. |
 
-No local artifact may substitute for remote-release evidence. If any required fact cannot be established, the report remains incomplete and publication must not be represented as finished.
+The preliminary local ZIP digest above is retained as evidence of the pre-release gate; documentation changes in PR #2 changed the final archive bytes. Publication evidence uses only the newly downloaded remote assets and their exact released digest. All v0.2.0 publication gates are complete, so the release Requirement may be closed after this report is merged and Agent Docs validation succeeds.
