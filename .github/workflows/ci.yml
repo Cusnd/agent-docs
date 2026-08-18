@@ -124,7 +124,7 @@ jobs:
       - run: node scripts/compare-release-artifacts.mjs artifacts
 
   gate:
-    name: gate
+    name: CI / gate
     runs-on: ubuntu-latest
     if: ${{ always() }}
     needs:

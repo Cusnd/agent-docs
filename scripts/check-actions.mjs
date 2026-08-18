@@ -7,6 +7,10 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const workflows = (await listRepositoryFiles(root)).filter((file) =>
   /^\.github\/workflows\/[^/]+\.ya?ml$/u.test(file),
 );
+const stableCheckNames = new Map([
+  [".github/workflows/ci.yml", ["CI / gate"]],
+  [".github/workflows/security.yml", ["Security / codeql", "Security / dependency-review"]],
+]);
 const errors = [];
 for (const file of workflows) {
   const content = await readFile(path.join(root, file), "utf8");
@@ -14,6 +18,12 @@ for (const file of workflows) {
     errors.push(`${file}: pull_request_target is forbidden`);
   if (!/^permissions:(?:\s+read-all)?\s*$/mu.test(content)) {
     errors.push(`${file}: missing explicit top-level permissions`);
+  }
+  const lines = content.split(/\r?\n/u).map((line) => line.trim());
+  for (const name of stableCheckNames.get(file) ?? []) {
+    if (!lines.includes(`name: ${name}`)) {
+      errors.push(`${file}: missing stable check name: ${name}`);
+    }
   }
   for (const match of content.matchAll(/\buses:\s*([^\s#]+)/gu)) {
     const value = match[1];
