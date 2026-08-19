@@ -4,6 +4,13 @@
 
 这里记录所有重要变化。格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，项目在 1.0 前针对 operator-facing 兼容性使用语义化版本。
 
+## [未发布]
+
+### 新增
+
+- 双语、单链接 Agent 安装契约：固定 Release identity，强制 checksum 与 attestation、信任审查、目标授权、事务式回滚、JSON 回读，以及不登录/不调用模型边界。
+- 仓库检查保证两个契约对象完全一致，并要求所有公开安装入口和安全关键命令持续存在。
+
 ## [0.2.0] - 2026-08-18
 
 ### 新增

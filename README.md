@@ -27,6 +27,22 @@ Agent Docs writes only to `docs/agent/` in an eligible top-level Git worktree an
 
 Before installing any plugin, review its marketplace entry, manifest, hook commands, and runtime scripts. The release archive is assembled from an explicit allowlist; tests, repository automation, `docs/agent`, and development dependencies are excluded.
 
+## Install with an Agent
+
+Send an Agent the [one-link installation contract](AGENT_INSTALL.md), or give it the canonical Raw URL directly:
+
+```text
+https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.md
+```
+
+Copy-paste instruction:
+
+```text
+Read and follow https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.md in full. Install Agent Docs v0.2.0. You are authorized to modify only Agent Docs marketplace and plugin state in the active Codex configuration root that you resolve and report, plus fresh operating-system temporary files. If the target is ambiguous or conflicting Agent Docs state already exists, stop and ask. Do not log in, call a model or AI inference API, read credentials, weaken a verification gate, or modify any unrelated configuration.
+```
+
+The Agent runbook pins the immutable Release, verifies SHA-256 and both GitHub artifact attestations, inspects the plugin trust surface, installs transactionally, performs JSON readback, and rolls back only state created by that run. It never authorizes changes to unrelated plugins or configuration.
+
 ## Quick start
 
 Requirements:
@@ -73,6 +89,7 @@ Requirement, Session, Decision, Receipt, Lock, and ID commands are internal prot
 ## Documentation
 
 - [Getting started](docs/getting-started.md)
+- [Install with an Agent](AGENT_INSTALL.md)
 - [Core concepts and lifecycle](docs/concepts.md)
 - [Operations](docs/operations.md)
 - [Troubleshooting](docs/troubleshooting.md)

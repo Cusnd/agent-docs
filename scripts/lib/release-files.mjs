@@ -3,6 +3,8 @@ import path from "node:path";
 
 const SINGLE_FILES = [
   ".agents/plugins/marketplace.json",
+  "AGENT_INSTALL.md",
+  "AGENT_INSTALL.zh-CN.md",
   "INSTALL.md",
   "INSTALL.zh-CN.md",
   "LICENSE",

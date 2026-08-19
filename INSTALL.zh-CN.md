@@ -4,6 +4,16 @@
 
 除非正在开发插件，否则应使用正式 GitHub Release。Agent Docs 不通过 npm 发布。
 
+## 由 Agent 执行安装
+
+若要使用带安全门槛的单链接流程，把[交给 Agent 的安装契约](AGENT_INSTALL.zh-CN.md)发给 Agent：
+
+```text
+https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.zh-CN.md
+```
+
+契约包含可复制的授权指令、不可变 Release identity 与 digest、带约束的 attestation 命令、安装前信任审查、冲突处理、JSON 回读、回滚、临时目录清理和新任务交接。它不允许登录、模型或 AI 推理 API 调用、凭据访问、持久化修改 `CODEX_HOME` 或改变无关插件。
+
 ## 审查信任面
 
 安装前检查解压目录中的 `.agents/plugins/marketplace.json`、`plugins/agent-docs/.codex-plugin/plugin.json`、`plugins/agent-docs/hooks/hooks.json` 和 `plugins/agent-docs/scripts/`。发布 ZIP 不应包含测试、仓库工作流、开发依赖、`docs/agent` 或可执行二进制文件。

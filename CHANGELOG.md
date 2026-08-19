@@ -4,6 +4,13 @@
 
 All notable changes are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses Semantic Versioning before 1.0 for operator-facing compatibility.
 
+## [Unreleased]
+
+### Added
+
+- Bilingual, one-link Agent installation contracts with pinned Release identities, checksum and attestation gates, trust review, target authorization, transactional rollback, JSON readback, and no-login/no-model boundaries.
+- Repository checks that keep both contract objects identical and require every public installation entrypoint and safety-critical command.
+
 ## [0.2.0] - 2026-08-18
 
 ### Added

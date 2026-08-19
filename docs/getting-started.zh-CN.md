@@ -10,7 +10,7 @@
 
 ## 安装
 
-按照 [INSTALL.zh-CN.md](../INSTALL.zh-CN.md) 操作：检查 Release 内容，验证 SHA-256 和 GitHub attestation，添加解压后的 Marketplace，安装 `agent-docs@agent-docs`，再打开一个全新的 Codex 任务。
+由 Agent 执行安装时，发送[单链接安装契约](../AGENT_INSTALL.zh-CN.md)；手动安装则按照 [INSTALL.zh-CN.md](../INSTALL.zh-CN.md) 操作。两条路径都要求审查 Release、验证 SHA-256 与 GitHub attestation、回读 Marketplace/插件，并打开全新 Codex 任务。
 
 ## 第一次 material workflow
 

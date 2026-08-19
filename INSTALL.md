@@ -4,6 +4,16 @@
 
 Use a published GitHub Release unless you are developing the plugin. Agent Docs is not published to npm.
 
+## Agent-operated installation
+
+For a guarded one-link workflow, give the Agent the [Agent installation contract](AGENT_INSTALL.md):
+
+```text
+https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.md
+```
+
+The contract includes a copy-paste authorization prompt, immutable Release identity and digests, constrained attestation commands, pre-install trust review, conflict handling, JSON readback, rollback, temporary-directory cleanup, and a fresh-task handoff. It does not permit login, model or AI inference API calls, credential access, persistent `CODEX_HOME` changes, or changes to unrelated plugins.
+
 ## Review the trust surface
 
 Before installation, inspect `.agents/plugins/marketplace.json`, `plugins/agent-docs/.codex-plugin/plugin.json`, `plugins/agent-docs/hooks/hooks.json`, and `plugins/agent-docs/scripts/` inside the extracted archive. The ZIP must not contain tests, repository workflows, development dependencies, `docs/agent`, or executable binaries.
