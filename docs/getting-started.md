@@ -10,7 +10,7 @@ The plugin works only in an eligible top-level worktree. It is inactive in bare 
 
 ## Install
 
-Follow [INSTALL.md](../INSTALL.md). Review the release contents, verify SHA-256 and the GitHub attestation, add the extracted Marketplace, install `agent-docs@agent-docs`, and start a fresh Codex task.
+For an Agent-operated installation, send the [one-link installation contract](../AGENT_INSTALL.md). For manual installation, follow [INSTALL.md](../INSTALL.md). Both paths require release review, SHA-256 and GitHub attestation verification, Marketplace/plugin readback, and a fresh Codex task.
 
 ## First material workflow
 

@@ -27,6 +27,22 @@ Agent Docs 只向合格的顶层 Git worktree 中的 `docs/agent/` 和该 worktr
 
 安装任何插件前，都应检查 Marketplace entry、插件 manifest、hook 命令和运行时脚本。发布 ZIP 只从明确 allowlist 构建；测试、仓库自动化、`docs/agent` 和开发依赖都不会进入发布物。
 
+## 交给 Agent 安装
+
+把[单链接安装契约](AGENT_INSTALL.zh-CN.md)交给 Agent，或者直接发送 canonical Raw URL：
+
+```text
+https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.zh-CN.md
+```
+
+可直接复制的指令：
+
+```text
+完整阅读并严格执行 https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.zh-CN.md，安装 Agent Docs v0.2.0。我授权你只修改你解析并报告的当前 Codex 配置根目录中的 Agent Docs Marketplace 与插件状态，以及新建的操作系统临时文件。若目标不明确或已存在冲突的 Agent Docs 状态，停止并询问。不得登录、调用模型或 AI 推理 API、读取凭据、降低任何验证门槛或修改无关配置。
+```
+
+Agent runbook 会固定不可变 Release、验证 SHA-256 和两份 GitHub artifact attestation、检查插件信任面、事务式安装、JSON 回读，并且只回滚本轮创建的状态。它不授权修改无关插件或配置。
+
 ## 快速开始
 
 前置条件：
@@ -73,6 +89,7 @@ Requirement、Session、Decision、Receipt、Lock 和 ID 命令属于内部协�
 ## 文档
 
 - [快速上手](docs/getting-started.zh-CN.md)
+- [交给 Agent 安装](AGENT_INSTALL.zh-CN.md)
 - [核心概念与生命周期](docs/concepts.zh-CN.md)
 - [日常运营](docs/operations.zh-CN.md)
 - [故障排查](docs/troubleshooting.zh-CN.md)
