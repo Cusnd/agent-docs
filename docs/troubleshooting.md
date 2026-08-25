@@ -6,6 +6,12 @@
 
 Check that this is a writable top-level Git worktree, not a bare repository, submodule, operating-system temporary directory, or repository with `.agent-docs-disable`. Confirm `node --version`, `codex --version`, and `codex plugin list --json`. A newly installed plugin requires a fresh Codex task.
 
+## Marketplace listing fails after installation
+
+If `codex plugin marketplace list --json` or `codex plugin list --json` says the Marketplace manifest is missing, inspect the configured Agent Docs source path. A local Marketplace is used in place: deleting its source directory breaks later readback even when an installed plugin cache still exists. A path under an operating-system temporary directory, task workspace, repository checkout, or missing extraction directory is not a valid persistent installation.
+
+If the configured `CODEX_HOME` belongs to a Windows `CodexSandbox*` account, the installation also targeted the restricted execution identity rather than the persistent configuration used by normal user-facing Codex tasks. Do not copy an entire sandbox configuration or recreate the missing temporary directory. Resolve the host user's persistent target, obtain explicit repair/migration authorization, and follow the [Agent installation contract](../AGENT_INSTALL.md) to install the verified source at `<CODEX_HOME>/marketplaces/agent-docs-v0.2.0`. Existing conflicting state must not be removed implicitly.
+
 ## `REPOSITORY_PROBE_FAILED`
 
 Use the structured error and stderr to distinguish missing Git, Git timeout, dubious ownership, ordinary Git failure, and filesystem transient failure. Fix the specific Git condition; do not repeatedly run document writes while repository identity is uncertain.

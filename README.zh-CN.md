@@ -38,10 +38,10 @@ https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.zh-CN.md
 可直接复制的指令：
 
 ```text
-完整阅读并严格执行 https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.zh-CN.md，安装 Agent Docs v0.2.0。我授权你只修改你解析并报告的当前 Codex 配置根目录中的 Agent Docs Marketplace 与插件状态，以及新建的操作系统临时文件。若目标不明确或已存在冲突的 Agent Docs 状态，停止并询问。不得登录、调用模型或 AI 推理 API、读取凭据、降低任何验证门槛或修改无关配置。
+完整阅读并严格执行 https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.zh-CN.md，安装 Agent Docs v0.2.0。我授权你只修改我的正常用户侧 Codex 任务所使用的持久 Codex 配置根目录中的 Agent Docs Marketplace 与插件状态，以及新建的操作系统临时文件。写入前必须解析并报告这个准确根目录。不得把 `CodexSandbox*` 账户、操作系统临时目录、当前 workspace 或 Release 解压目录当作该目标。若无法区分持久用户目标，或已存在冲突的 Agent Docs 状态，停止并询问。不得登录、调用模型或 AI 推理 API、读取凭据、降低任何验证门槛或修改无关配置。
 ```
 
-Agent runbook 会固定不可变 Release、验证 SHA-256 和两份 GitHub artifact attestation、检查插件信任面、事务式安装、JSON 回读，并且只回滚本轮创建的状态。它不授权修改无关插件或配置。
+Agent runbook 会固定不可变 Release、拒绝 sandbox/临时/workspace 目标、验证 SHA-256 和两份 GitHub artifact attestation、保留已验证的版本化 Marketplace 源、在清理临时目录后执行 JSON 回读，并且只回滚本轮创建的状态。它不授权修改无关插件或配置。
 
 ## 快速开始
 
@@ -51,15 +51,16 @@ Agent runbook 会固定不可变 Release、验证 SHA-256 和两份 GitHub artif
 - Node.js `^22.0.0 || ^24.0.0 || ^26.0.0`。
 - Git。
 
-从 [v0.2.0 Release](https://github.com/Cusnd/agent-docs/releases/tag/v0.2.0) 下载 `agent-docs-marketplace-v0.2.0.zip` 和 `SHA256SUMS`，验证校验和与 GitHub artifact attestation，解压后运行：
+从 [v0.2.0 Release](https://github.com/Cusnd/agent-docs/releases/tag/v0.2.0) 下载 `agent-docs-marketplace-v0.2.0.zip` 和 `SHA256SUMS`，验证校验和与 GitHub artifact attestation，并审查 archive。把已验证的顶层目录复制到持久路径 `<CODEX_HOME>/marketplaces/agent-docs-v0.2.0`；不得注册临时解压目录或 workspace。然后运行：
 
 ```console
-codex plugin marketplace add <解压后的-marketplace-目录>
+codex plugin marketplace add <persistent-marketplace-directory>
+codex plugin marketplace list --json
 codex plugin add agent-docs@agent-docs
 codex plugin list --json
 ```
 
-安装后请在合格 Git 仓库中打开一个全新的 Codex 任务；插件不会改变已经运行任务的 hook 集合。完整的检查、校验、恢复与卸载步骤见 [INSTALL.zh-CN.md](INSTALL.zh-CN.md)。
+保留持久 Marketplace 源，只删除可丢弃的下载/解压目录，并使用全新 CLI 进程重复两项 JSON 回读。之后再在合格 Git 仓库中打开一个全新的 Codex 任务；插件不会改变已经运行任务的 hook 集合。完整的目标解析、复制校验、恢复与卸载步骤见 [INSTALL.zh-CN.md](INSTALL.zh-CN.md)。
 
 ## 兼容性
 

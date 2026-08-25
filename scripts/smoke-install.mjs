@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { execFileSync } from "node:child_process";
-import { access, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { access, cp, mkdir, mkdtemp, readFile, rename, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -73,7 +73,20 @@ try {
 
   await mkdir(isolatedCodexHome, { recursive: true });
   const isolatedEnvironment = { ...process.env, CODEX_HOME: isolatedCodexHome };
-  const marketplaceRoot = path.join(extractRoot, ARCHIVE_BASENAME);
+  const extractedMarketplaceRoot = path.join(extractRoot, ARCHIVE_BASENAME);
+  const marketplaceParent = path.join(isolatedCodexHome, "marketplaces");
+  const marketplaceRoot = path.join(marketplaceParent, "agent-docs-v0.2.0");
+  const marketplaceStaging = path.join(
+    marketplaceParent,
+    `.agent-docs-v0.2.0-${smokeIdentity}.staging`,
+  );
+  await mkdir(marketplaceParent, { recursive: true });
+  await cp(extractedMarketplaceRoot, marketplaceStaging, {
+    recursive: true,
+    errorOnExist: true,
+    force: false,
+  });
+  await rename(marketplaceStaging, marketplaceRoot);
   const codexEntrypoint = await locateCodexEntrypoint();
   const runCodex = (args) =>
     run(process.execPath, [codexEntrypoint, ...args], { env: isolatedEnvironment });
@@ -250,13 +263,26 @@ try {
   if (!recovered.systemMessage?.includes("Log Health Warning"))
     throw new Error("Stop recovery warning was not recorded.");
 
+  await rm(temporary, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+  const marketplaceAfterTemporaryCleanup = runCodex(["plugin", "marketplace", "list", "--json"]);
+  if (
+    !marketplaceAfterTemporaryCleanup.includes('"agent-docs"') ||
+    !marketplaceAfterTemporaryCleanup.includes("agent-docs-v0.2.0")
+  ) {
+    throw new Error("Marketplace was not usable after disposable extraction cleanup.");
+  }
+  const installedAfterTemporaryCleanup = runCodex(["plugin", "list", "--json"]);
+  if (!installedAfterTemporaryCleanup.includes('"agent-docs"')) {
+    throw new Error("Installed plugin was not usable after disposable extraction cleanup.");
+  }
+
   json(runCodex(["plugin", "remove", "agent-docs@agent-docs", "--json"]));
   json(runCodex(["plugin", "marketplace", "remove", "agent-docs", "--json"]));
   const remaining = runCodex(["plugin", "list", "--json"]);
   if (remaining.includes('"agent-docs"'))
     throw new Error("Plugin remained after isolated removal.");
   console.log(
-    "Isolated CODEX_HOME install, hook workflow, Stop repair, and removal smoke test passed.",
+    "Persistent Marketplace install, disposable cleanup, fresh-process readback, hook workflow, Stop repair, and isolated removal smoke test passed.",
   );
 } finally {
   await rm(temporary, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });

@@ -13,7 +13,7 @@ https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.md
 Suggested one-message instruction:
 
 ```text
-Read and follow https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.md in full. Install Agent Docs v0.2.0. You are authorized to modify only Agent Docs marketplace and plugin state in the active Codex configuration root that you resolve and report, plus fresh operating-system temporary files. If the target is ambiguous or conflicting Agent Docs state already exists, stop and ask. Do not log in, call a model or AI inference API, read credentials, weaken a verification gate, or modify any unrelated configuration.
+Read and follow https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.md in full. Install Agent Docs v0.2.0. You are authorized to modify only Agent Docs marketplace and plugin state in the persistent Codex configuration root used by my normal user-facing Codex tasks, plus fresh operating-system temporary files. Resolve and report that exact root before writing. Do not treat a `CodexSandbox*` account, an operating-system temporary directory, the current workspace, or the extracted release directory as that target. If you cannot distinguish the persistent user target, or conflicting Agent Docs state already exists, stop and ask. Do not log in, call a model or AI inference API, read credentials, weaken a verification gate, or modify any unrelated configuration.
 ```
 
 The words **MUST**, **MUST NOT**, and **STOP** below are binding. This document is an executable runbook for an Agent, not a shell script. The Agent must adapt path and quoting syntax to the detected operating system without weakening any gate.
@@ -26,7 +26,7 @@ The English and Chinese documents contain the same contract object. A repository
 
 ```json
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "entrypoint": "https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.md",
   "repository": "Cusnd/agent-docs",
   "distribution": "github-release-zip",
@@ -58,6 +58,16 @@ The English and Chinese documents contain the same contract object. A repository
   "verified_codex_cli": "0.147.0",
   "node": "^22.0.0 || ^24.0.0 || ^26.0.0",
   "verified_operating_systems": ["Windows", "Linux", "macOS"],
+  "target": {
+    "kind": "persistent-user-codex-home",
+    "reject_sandbox_identity": true,
+    "reject_temporary_or_workspace_path": true
+  },
+  "marketplace_storage": {
+    "relative_path": "marketplaces/agent-docs-v0.2.0",
+    "persistent": true,
+    "remove_with_temporary_files": false
+  },
   "safety": {
     "require_target_authorization": true,
     "allow_login": false,
@@ -74,19 +84,20 @@ The English and Chinese documents contain the same contract object. A repository
 
 Before any write, the Agent MUST:
 
-1. Resolve the Codex configuration root that the Codex subprocess will actually use. An explicitly supplied `CODEX_HOME` wins; otherwise use the active Codex CLI default. Do not set a persistent user or system environment variable.
-2. Report that target to the user. The suggested instruction above explicitly authorizes the unambiguous active target. Any other instruction must name or clearly authorize a target before installation proceeds.
-3. Confirm that writes are limited to newly created operating-system temporary files and Agent Docs marketplace/plugin state under that target.
+1. Resolve the existing, persistent Codex configuration root used by the user's normal user-facing Codex tasks. A `CODEX_HOME` configured for those normal tasks, or explicitly named by the user for this installation, wins only when its canonical absolute path is persistent and authorized. A value inherited only by the restricted executor is not proof of the user target. Otherwise the normal CLI default is `~/.codex` for the host user—not for a restricted execution identity.
+2. Inspect the effective identity, user profile, current workspace, operating-system temporary root, and canonical target relationship without printing credentials or the environment wholesale. A target owned by a `CodexSandbox*` identity, or located in a temporary directory, workspace, repository, release extraction, or path reached through an unexpected link, is not the persistent user target. If the host target cannot be distinguished independently, STOP and ask the user to name it.
+3. Report the canonical target to the user before writing. The suggested instruction above authorizes only an unambiguous persistent user target. Any other instruction must name or clearly authorize the target before installation proceeds.
+4. Confirm that writes are limited to newly created operating-system temporary files and Agent Docs marketplace/plugin state under that target, including the persistent versioned Marketplace source defined below. Do not set a persistent user or system environment variable.
 
 The Agent MUST STOP without making a configuration change when any of these conditions holds:
 
-- the target is missing, ambiguous, outside the user's authorization, or resolves through an unexpected link;
+- the target is missing, ambiguous, outside the user's authorization, belongs to a `CodexSandbox*` identity, lies under a temporary directory/workspace/repository/extraction directory, or resolves through an unexpected link;
 - a required command is missing, its current help does not support the required flags, or a login would be needed;
 - an existing `agent-docs` marketplace or `agent-docs@agent-docs` plugin is conflicting, incomplete, or a different version;
 - the release is missing, draft, prerelease, substituted, or has unexpected assets;
 - a digest, checksum manifest, attestation, archive-path, file-count, trust-surface, install, or readback check fails.
 
-If the exact `agent-docs@agent-docs` version `0.2.0` is already installed from the expected marketplace and readback is healthy, make no change and report idempotent success. Never upgrade, overwrite, remove, or repair an existing installation implicitly.
+If the exact `agent-docs@agent-docs` version `0.2.0` is already installed from the expected persistent Marketplace path and readback is healthy, make no change and report idempotent success. A Marketplace rooted in a temporary directory or workspace is conflicting state even if the plugin cache exists. Never upgrade, overwrite, remove, migrate, or repair an existing installation implicitly.
 
 ## Installation procedure
 
@@ -160,16 +171,26 @@ Do not execute a file from the archive before this review. Attestation proves bu
 
 ### 5. Install transactionally
 
-Apply the authorized configuration root only to the individual Codex subprocesses. Do not persistently change `CODEX_HOME`. Use the extracted top-level directory—the directory containing `.agents/`—as the Marketplace source:
+Apply the authorized configuration root only to the individual Codex subprocesses. Do not persistently change `CODEX_HOME`. Codex records a local Marketplace's absolute source path and continues to use that directory in place; plugin installation does not make the Marketplace source disposable.
+
+Define `<persistent-marketplace-directory>` as the canonical path obtained by joining the authorized target with `marketplaces/agent-docs-v0.2.0`. It MUST remain below that target. Never register the temporary extraction directory, current task directory, workspace, repository checkout, or any other disposable path.
+
+Before changing Codex configuration:
+
+1. If the persistent directory does not exist, create a fresh staging sibling below `<CODEX_HOME>/marketplaces`, copy the verified extracted top-level directory into it, compare the complete relative file set and SHA-256 of all 34 regular files with the verified extraction, then atomically rename the staging directory to `<persistent-marketplace-directory>`. Track that this run created it.
+2. If the persistent directory already exists, do not overwrite or merge it. Reuse it only if its canonical path, complete relative file set, and every file digest exactly match the verified extraction; otherwise STOP as a conflict.
+3. Reject links, reparse points, unexpected file types, path escapes, an existing destination with different bytes, or a copy/rename that cannot be proven complete.
+
+Register only the persistent directory:
 
 ```console
-codex plugin marketplace add <extracted-top-level-directory> --json
+codex plugin marketplace add <persistent-marketplace-directory> --json
 codex plugin marketplace list --json
 codex plugin add agent-docs@agent-docs --json
 codex plugin list --json
 ```
 
-Track whether this run successfully added the marketplace and plugin. The final readback MUST show marketplace `agent-docs`, installed selector `agent-docs@agent-docs`, and plugin version `0.2.0`. Treat warnings, ambiguous JSON, a different source/version, or a missing installed marker as failure.
+Track whether this run successfully created the persistent source, added the Marketplace, and added the plugin. The final readback MUST show Marketplace `agent-docs` rooted at the exact canonical `<persistent-marketplace-directory>`, installed selector `agent-docs@agent-docs`, and plugin version `0.2.0`. Treat warnings, ambiguous JSON, a different source/version, a non-persistent source, or a missing installed marker as failure.
 
 If any post-write step fails, roll back only state created by this run, in reverse order:
 
@@ -180,17 +201,26 @@ codex plugin list --json
 codex plugin marketplace list --json
 ```
 
-Never remove pre-existing state. If rollback cannot be proven complete, STOP and report the exact remaining Agent Docs state without retrying destructive commands blindly.
+Never remove pre-existing state. After readback proves that the Marketplace entry created by this run is gone, remove the persistent source only if this run created it, its canonical path is exactly the versioned destination below the authorized target, and its contents still match the verified copy. Never remove a pre-existing identical source. If rollback cannot be proven complete, STOP and report the exact remaining Agent Docs state without retrying destructive commands blindly.
 
 ### 6. Finish without starting a model task
 
-After successful readback, remove only the two fresh temporary directories after verifying that each resolves inside the operating system's temporary root. Do not recursively delete an unresolved variable, user directory, workspace, repository, or Codex configuration root.
+After successful readback, remove only the two fresh temporary directories after verifying that each resolves inside the operating system's temporary root. Retain `<persistent-marketplace-directory>`: it is installed state, not temporary extraction. Do not recursively delete an unresolved variable, persistent Marketplace source, user directory, workspace, repository, or Codex configuration root.
+
+After temporary cleanup, invoke fresh Codex CLI processes with the same authorized per-process `CODEX_HOME` and repeat both readbacks:
+
+```console
+codex plugin marketplace list --json
+codex plugin list --json
+```
+
+Both commands MUST still succeed and report the exact persistent source, selector, and version before installation is reported complete.
 
 Report a compact result containing:
 
 - resolved and authorized Codex configuration target;
 - release tag, archive digest, checksum result, and constrained attestation result;
-- marketplace/plugin name and installed version from JSON readback;
+- persistent Marketplace source, Marketplace/plugin name, and installed version from post-cleanup JSON readback;
 - whether the run installed, found an identical existing installation, or rolled back;
 - confirmation that no login, model or AI inference API call, credential access, or unrelated configuration change occurred.
 
@@ -206,6 +236,8 @@ codex plugin marketplace remove agent-docs --json
 codex plugin list --json
 codex plugin marketplace list --json
 ```
+
+CLI removal does not delete `<CODEX_HOME>/marketplaces/agent-docs-v0.2.0`. Delete that exact versioned source only when the removal authorization explicitly includes it, both JSON readbacks prove that no configured Marketplace references it, and its canonical path remains below the authorized target. Never delete the `marketplaces` parent or the Codex configuration root.
 
 Removing the plugin does not delete repository-owned `docs/agent` records. Review those records separately; never delete them as an implicit part of uninstalling the plugin.
 

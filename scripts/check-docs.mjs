@@ -17,7 +17,7 @@ const pairingExclusions = [
 const installContractStart = "<!-- agent-docs:install-contract:start -->";
 const installContractEnd = "<!-- agent-docs:install-contract:end -->";
 const expectedInstallContract = {
-  schema_version: 1,
+  schema_version: 2,
   entrypoint: "https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.md",
   repository: "Cusnd/agent-docs",
   distribution: "github-release-zip",
@@ -50,6 +50,16 @@ const expectedInstallContract = {
   verified_codex_cli: "0.147.0",
   node: "^22.0.0 || ^24.0.0 || ^26.0.0",
   verified_operating_systems: ["Windows", "Linux", "macOS"],
+  target: {
+    kind: "persistent-user-codex-home",
+    reject_sandbox_identity: true,
+    reject_temporary_or_workspace_path: true,
+  },
+  marketplace_storage: {
+    relative_path: "marketplaces/agent-docs-v0.2.0",
+    persistent: true,
+    remove_with_temporary_files: false,
+  },
   safety: {
     require_target_authorization: true,
     allow_login: false,
@@ -185,6 +195,41 @@ for (const file of installContractFiles) {
   if (typeof content !== "string") continue;
   for (const token of requiredRunbookTokens) {
     if (!content.includes(token)) errors.push(`${file}: missing required runbook token ${token}`);
+  }
+}
+
+const installLifecycleFiles = [
+  "AGENT_INSTALL.md",
+  "AGENT_INSTALL.zh-CN.md",
+  "INSTALL.md",
+  "INSTALL.zh-CN.md",
+  "README.md",
+  "README.zh-CN.md",
+];
+const requiredLifecycleTokens = [
+  "marketplaces/agent-docs-v0.2.0",
+  "codex plugin marketplace add <persistent-marketplace-directory>",
+];
+const forbiddenDisposableSourceTokens = [
+  "codex plugin marketplace add <extracted-top-level-directory>",
+  "codex plugin marketplace add <extracted-marketplace-directory>",
+  "codex plugin marketplace add <解压后的顶层目录>",
+  "codex plugin marketplace add <解压后的-marketplace-目录>",
+];
+for (const file of installLifecycleFiles) {
+  const content = markdownContents.get(file);
+  if (typeof content !== "string") continue;
+  for (const token of requiredLifecycleTokens) {
+    if (!content.includes(token)) errors.push(`${file}: missing install lifecycle token ${token}`);
+  }
+  for (const token of forbiddenDisposableSourceTokens) {
+    if (content.includes(token)) errors.push(`${file}: registers a disposable Marketplace source`);
+  }
+}
+for (const file of ["AGENT_INSTALL.md", "AGENT_INSTALL.zh-CN.md", "README.md", "README.zh-CN.md"]) {
+  const content = markdownContents.get(file);
+  if (typeof content === "string" && !content.includes("CodexSandbox")) {
+    errors.push(`${file}: missing Windows sandbox-target guard`);
   }
 }
 

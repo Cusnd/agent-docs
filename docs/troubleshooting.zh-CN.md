@@ -6,6 +6,12 @@
 
 确认当前路径是可写的顶层 Git worktree，而不是 bare repository、submodule、操作系统临时目录或包含 `.agent-docs-disable` 的仓库。检查 `node --version`、`codex --version` 和 `codex plugin list --json`。新安装插件需要打开全新 Codex 任务。
 
+## 安装后 Marketplace 列表失败
+
+若 `codex plugin marketplace list --json` 或 `codex plugin list --json` 报告 Marketplace manifest 缺失，检查已配置的 Agent Docs 来源路径。本地 Marketplace 会被原地使用：删除源目录后，即使已安装插件 cache 仍存在，后续回读也会失败。位于操作系统临时目录、任务 workspace、仓库 checkout 或已经消失的解压目录下的路径，都不是有效的持久安装。
+
+若已配置的 `CODEX_HOME` 属于 Windows `CodexSandbox*` 账户，安装还错误地写入了受限执行身份，而不是正常用户侧 Codex 任务使用的持久配置。不得复制整个 sandbox 配置，也不要重建已经丢失的临时目录。先解析 host 用户的持久目标，取得明确的修复/迁移授权，再严格执行[交给 Agent 的安装契约](../AGENT_INSTALL.zh-CN.md)，把已验证来源安装到 `<CODEX_HOME>/marketplaces/agent-docs-v0.2.0`。不得隐式移除已有冲突状态。
+
 ## `REPOSITORY_PROBE_FAILED`
 
 根据结构化错误与 stderr 区分 Git 缺失、Git timeout、dubious ownership、普通 Git failure 和文件系统瞬态失败。修复具体 Git 条件；仓库身份不确定时不要反复写文档。
