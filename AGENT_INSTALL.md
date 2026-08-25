@@ -105,7 +105,7 @@ The Agent MUST STOP without making a configuration change when any of these cond
 - the release is missing, draft, prerelease, substituted, or has unexpected assets;
 - a digest, checksum manifest, attestation, archive-path, file-count, trust-surface, install, or readback check fails.
 
-If the exact `agent-docs@agent-docs` version `0.2.0` is already installed from the expected persistent Marketplace path and readback is healthy, make no change and report idempotent success. A Marketplace rooted in a temporary directory or workspace is conflicting state even if the plugin cache exists. Never upgrade, overwrite, remove, migrate, or repair an existing installation implicitly.
+If the exact `agent-docs@agent-docs` version `0.2.0` is already installed from the expected persistent Marketplace path and readback is healthy, preserve that installation and continue directly to section 6 for hook review and activation; skip repeated download, Marketplace registration, and plugin installation writes. This is not yet operational success: report idempotent success only after all three hooks show `Installed 1 / Active 1 / Review 0`. A Marketplace rooted in a temporary directory or workspace is conflicting state even if the plugin cache exists. Never upgrade, overwrite, remove, migrate, or repair an existing installation implicitly.
 
 ## Installation procedure
 

@@ -223,6 +223,24 @@ const requiredHookActivationTokens = [
   "--dangerously-bypass-hook-trust",
   "Installed 1 / Active 1 / Review 0",
 ];
+const idempotentActivationContracts = [
+  {
+    file: "AGENT_INSTALL.md",
+    installationHeading: "## Installation procedure",
+    requiredBeforeInstallation: [
+      "continue directly to section 6 for hook review and activation",
+      "report idempotent success only after all three hooks show `Installed 1 / Active 1 / Review 0`",
+    ],
+  },
+  {
+    file: "AGENT_INSTALL.zh-CN.md",
+    installationHeading: "## 安装流程",
+    requiredBeforeInstallation: [
+      "直接继续到第 6 节进行 hook 审查与激活",
+      "只有在三个 hooks 都显示 `Installed 1 / Active 1 / Review 0` 后才能报告幂等成功",
+    ],
+  },
+];
 const forbiddenDisposableSourceTokens = [
   "codex plugin marketplace add <extracted-top-level-directory>",
   "codex plugin marketplace add <extracted-marketplace-directory>",
@@ -240,6 +258,23 @@ for (const file of installLifecycleFiles) {
   }
   for (const token of forbiddenDisposableSourceTokens) {
     if (content.includes(token)) errors.push(`${file}: registers a disposable Marketplace source`);
+  }
+}
+for (const contract of idempotentActivationContracts) {
+  const content = markdownContents.get(contract.file);
+  if (typeof content !== "string") continue;
+  const installationHeadingIndex = content.indexOf(contract.installationHeading);
+  if (installationHeadingIndex === -1) {
+    errors.push(`${contract.file}: missing installation heading ${contract.installationHeading}`);
+    continue;
+  }
+  const preInstallation = content.slice(0, installationHeadingIndex);
+  for (const clause of contract.requiredBeforeInstallation) {
+    if (!preInstallation.includes(clause)) {
+      errors.push(
+        `${contract.file}: missing pre-installation idempotent activation clause ${clause}`,
+      );
+    }
   }
 }
 for (const file of ["AGENT_INSTALL.md", "AGENT_INSTALL.zh-CN.md", "README.md", "README.zh-CN.md"]) {

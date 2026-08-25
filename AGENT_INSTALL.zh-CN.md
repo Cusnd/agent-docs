@@ -105,7 +105,7 @@ https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.zh-CN.md
 - Release 缺失、是 draft/prerelease、被替换或包含非预期资产；
 - digest、checksum manifest、attestation、归档路径、文件数、信任面、安装或回读检查失败。
 
-若完全相同的 `agent-docs@agent-docs` `0.2.0` 已从预期持久 Marketplace 路径安装且回读健康，则不做修改，报告幂等成功。即使插件 cache 存在，根目录位于临时目录或 workspace 的 Marketplace 仍属于冲突状态。不得隐式升级、覆盖、移除、迁移或修复现有安装。
+若完全相同的 `agent-docs@agent-docs` `0.2.0` 已从预期持久 Marketplace 路径安装且回读健康，则保留该安装并直接继续到第 6 节进行 hook 审查与激活；跳过重复下载、Marketplace 注册和插件安装写入。此时尚不能视为可运行成功：只有在三个 hooks 都显示 `Installed 1 / Active 1 / Review 0` 后才能报告幂等成功。即使插件 cache 存在，根目录位于临时目录或 workspace 的 Marketplace 仍属于冲突状态。不得隐式升级、覆盖、移除、迁移或修复现有安装。
 
 ## 安装流程
 
