@@ -13,7 +13,7 @@ https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.zh-CN.md
 建议直接发送的一段指令：
 
 ```text
-完整阅读并严格执行 https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.zh-CN.md，安装 Agent Docs v0.2.0。我授权你只修改我的正常用户侧 Codex 任务所使用的持久 Codex 配置根目录中的 Agent Docs Marketplace 与插件状态，以及新建的操作系统临时文件。写入前必须解析并报告这个准确根目录。不得把 `CodexSandbox*` 账户、操作系统临时目录、当前 workspace 或 Release 解压目录当作该目标。若无法区分持久用户目标，或已存在冲突的 Agent Docs 状态，停止并询问。不得登录、调用模型或 AI 推理 API、读取凭据、降低任何验证门槛或修改无关配置。
+完整阅读并严格执行 https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.zh-CN.md，安装 Agent Docs v0.2.0。我授权你只修改我的正常用户侧 Codex 任务所使用的持久 Codex 配置根目录中的 Agent Docs Marketplace 与插件状态，以及新建的操作系统临时文件。写入前必须解析并报告这个准确根目录。向我展示三个 Agent Docs hook 的准确定义并确认它们与已审查 Release 完全一致后，你可以仅通过 Codex 的 `/hooks` 审查界面持久信任这些定义。不得使用 `--dangerously-bypass-hook-trust`。不得把 `CodexSandbox*` 账户、操作系统临时目录、当前 workspace 或 Release 解压目录当作该目标。若无法区分持久用户目标，或已存在冲突的 Agent Docs 状态，停止并询问。不得登录、调用模型或 AI 推理 API、读取凭据、降低任何验证门槛或修改无关配置。
 ```
 
 下文的 **必须**、**不得**和**停止**具有约束力。本文档是供 Agent 执行的 runbook，不是 shell 脚本。Agent 必须根据检测到的操作系统调整路径和引号语法，但不得降低任何门槛。
@@ -26,7 +26,7 @@ https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.zh-CN.md
 
 ```json
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "entrypoint": "https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.md",
   "repository": "Cusnd/agent-docs",
   "distribution": "github-release-zip",
@@ -67,6 +67,14 @@ https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.zh-CN.md
     "relative_path": "marketplaces/agent-docs-v0.2.0",
     "persistent": true,
     "remove_with_temporary_files": false
+  },
+  "hook_activation": {
+    "trust_required": true,
+    "review_command": "/hooks",
+    "auto_trust": false,
+    "persistent_bypass_allowed": false,
+    "expected_events": ["UserPromptSubmit", "SubagentStart", "Stop"],
+    "expected_status": "Installed 1 / Active 1 / Review 0"
   },
   "safety": {
     "require_target_authorization": true,
@@ -203,7 +211,7 @@ codex plugin marketplace list --json
 
 不得移除已有状态。回读证明本轮创建的 Marketplace entry 已消失后，只有当持久源也是本轮创建、其 canonical 路径正好是已授权目标下的版本化目标，而且内容仍与已验证副本一致时，才能删除它。不得删除预先存在的相同持久源。若无法证明回滚完成，立即停止并报告残留的准确 Agent Docs 状态，不得盲目重试破坏性命令。
 
-### 6. 不启动模型任务地完成
+### 6. 不启动模型任务地激活已审查 hooks 并完成
 
 成功回读后，先确认两个新建临时目录都解析到操作系统临时根目录内，再只删除它们。必须保留 `<persistent-marketplace-directory>`：它是已安装状态，不是临时解压目录。不得对未解析变量、持久 Marketplace 源、用户目录、workspace、仓库或 Codex 配置根目录执行递归删除。
 
@@ -214,17 +222,28 @@ codex plugin marketplace list --json
 codex plugin list --json
 ```
 
-两条命令仍然成功并报告准确的持久来源、selector 与版本之后，才能报告安装完成。
+两条命令仍然成功并报告准确的持久来源、selector 与版本，才能证明安装完成；这不能证明 hooks 已激活，因为已启用插件的 hooks 不会自动获得信任。
+
+上面的建议授权只允许在精确定义已审查后写入信任。启动一个不带 prompt 的全新 Codex 交互进程；若启动时出现信任门，则选择 **Review hooks**，否则输入 `/hooks`。逐条审查三个 entry，并要求：
+
+- 来源为 `Plugin - agent-docs@agent-docs`；
+- event 与命令分别为 `UserPromptSubmit` → `node "$PLUGIN_ROOT/scripts/agent-docs.mjs" hook user-prompt-submit`、`SubagentStart` → `node "$PLUGIN_ROOT/scripts/agent-docs.mjs" hook subagent-start`、`Stop` → `node "$PLUGIN_ROOT/scripts/agent-docs.mjs" hook stop`；Windows 使用等价的 `commandWindows` 形式；
+- timeout 和 context limit 与已审查 Release 中的 `hooks/hooks.json` 完全一致。
+
+只有全部定义匹配后，才能通过该审查界面持久信任。不得手工编辑 `hooks.state`，也不得把 `--dangerously-bypass-hook-trust` 当作安装或验证捷径。信任绑定到准确的 hook-definition hash；定义以后发生变化时必须重新审查，不能静默继承旧信任。
+
+再次进入 `/hooks`，要求 `UserPromptSubmit`、`SubagentStart` 和 `Stop` 每一项均显示 `Installed 1 / Active 1 / Review 0`，然后在不提交模型 prompt 的情况下退出。如果无法进行交互审查，或任一 entry 不一致，必须停止：报告**已安装，hook 激活待完成**，并把准确的 `/hooks` 操作交给用户；不得声称 Agent Docs 已可运行。
 
 报告紧凑结果，包含：
 
 - 已解析且获授权的 Codex 配置目标；
 - Release tag、archive digest、checksum 结果与带约束的 attestation 结果；
 - 清理后 JSON 回读中的持久 Marketplace 来源、Marketplace/插件名称与已安装版本；
+- 三个已审查定义的 `/hooks` 激活状态，或明确的“已安装，hook 激活待完成”状态；
 - 本轮是完成安装、发现完全相同的现有安装，还是已经回滚；
 - 未发生登录、模型或 AI 推理 API 调用、凭据访问或无关配置修改。
 
-提示用户在合格顶层 Git worktree 中打开一个**全新的 Codex 任务**。不得自动打开交互任务，因为这可能触发登录或模型活动；已运行任务加载的 hooks 不会追溯更新。
+激活完成后，提示用户在合格顶层 Git worktree 中打开一个**全新的 Codex 任务**。第一条 prompt 应创建 pending Turn Receipt；非实质探针必须把它解析为 `not-material`，实质工作则必须创建 Work Session 并关闭 Receipt。不得自动提交该 prompt，因为那会调用模型或 AI 推理 API；已运行任务加载的 hooks 不会追溯更新。
 
 ## 显式移除
 

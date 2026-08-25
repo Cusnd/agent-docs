@@ -4,7 +4,11 @@
 
 ## Hook 未运行
 
-确认当前路径是可写的顶层 Git worktree，而不是 bare repository、submodule、操作系统临时目录或包含 `.agent-docs-disable` 的仓库。检查 `node --version`、`codex --version` 和 `codex plugin list --json`。新安装插件需要打开全新 Codex 任务。
+先在全新的 Codex 进程中输入 `/hooks`。如果 `UserPromptSubmit`、`SubagentStart` 和 `Stop` 显示 `Installed 1 / Active 0 / Review 1`，说明插件已经存在，但这些准确定义尚未获得信任。把来源与命令同已验证 Release 比较，只通过该界面信任完全匹配的定义，并要求三项均显示 `Installed 1 / Active 1 / Review 0`。不得手工编辑 `hooks.state`，也不得用 `--dangerously-bypass-hook-trust` 作为持久修复；定义变化后必须重新审查。
+
+如果三个 hooks 都已激活，再确认当前路径是可写的顶层 Git worktree，而不是 bare repository、submodule、操作系统临时目录或包含 `.agent-docs-disable` 的仓库。检查 `node --version`、`codex --version` 和 `codex plugin list --json`。新安装或新信任的插件需要打开全新 Codex 任务，因为已有任务不会重新加载 hook 集合。
+
+如果 `UserPromptSubmit` 已创建 Receipt，但 Agent 命令在 sandbox 中以 `EPERM` 或 `EACCES` 失败，只应授予或审批写入 `docs/agent/` 与该 worktree 的 `.git/agent-docs/` 所需权限。hook 信任与文件系统权限是两个独立门槛。
 
 ## 安装后 Marketplace 列表失败
 

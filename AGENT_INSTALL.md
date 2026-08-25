@@ -13,7 +13,7 @@ https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.md
 Suggested one-message instruction:
 
 ```text
-Read and follow https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.md in full. Install Agent Docs v0.2.0. You are authorized to modify only Agent Docs marketplace and plugin state in the persistent Codex configuration root used by my normal user-facing Codex tasks, plus fresh operating-system temporary files. Resolve and report that exact root before writing. Do not treat a `CodexSandbox*` account, an operating-system temporary directory, the current workspace, or the extracted release directory as that target. If you cannot distinguish the persistent user target, or conflicting Agent Docs state already exists, stop and ask. Do not log in, call a model or AI inference API, read credentials, weaken a verification gate, or modify any unrelated configuration.
+Read and follow https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.md in full. Install Agent Docs v0.2.0. You are authorized to modify only Agent Docs marketplace and plugin state in the persistent Codex configuration root used by my normal user-facing Codex tasks, plus fresh operating-system temporary files. Resolve and report that exact root before writing. After showing and matching the exact three Agent Docs hook definitions to the reviewed release, you may persist trust for only those definitions through Codex's `/hooks` review UI. Do not use `--dangerously-bypass-hook-trust`. Do not treat a `CodexSandbox*` account, an operating-system temporary directory, the current workspace, or the extracted release directory as that target. If you cannot distinguish the persistent user target, or conflicting Agent Docs state already exists, stop and ask. Do not log in, call a model or AI inference API, read credentials, weaken a verification gate, or modify any unrelated configuration.
 ```
 
 The words **MUST**, **MUST NOT**, and **STOP** below are binding. This document is an executable runbook for an Agent, not a shell script. The Agent must adapt path and quoting syntax to the detected operating system without weakening any gate.
@@ -26,7 +26,7 @@ The English and Chinese documents contain the same contract object. A repository
 
 ```json
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "entrypoint": "https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.md",
   "repository": "Cusnd/agent-docs",
   "distribution": "github-release-zip",
@@ -67,6 +67,14 @@ The English and Chinese documents contain the same contract object. A repository
     "relative_path": "marketplaces/agent-docs-v0.2.0",
     "persistent": true,
     "remove_with_temporary_files": false
+  },
+  "hook_activation": {
+    "trust_required": true,
+    "review_command": "/hooks",
+    "auto_trust": false,
+    "persistent_bypass_allowed": false,
+    "expected_events": ["UserPromptSubmit", "SubagentStart", "Stop"],
+    "expected_status": "Installed 1 / Active 1 / Review 0"
   },
   "safety": {
     "require_target_authorization": true,
@@ -203,7 +211,7 @@ codex plugin marketplace list --json
 
 Never remove pre-existing state. After readback proves that the Marketplace entry created by this run is gone, remove the persistent source only if this run created it, its canonical path is exactly the versioned destination below the authorized target, and its contents still match the verified copy. Never remove a pre-existing identical source. If rollback cannot be proven complete, STOP and report the exact remaining Agent Docs state without retrying destructive commands blindly.
 
-### 6. Finish without starting a model task
+### 6. Activate reviewed hooks and finish without starting a model task
 
 After successful readback, remove only the two fresh temporary directories after verifying that each resolves inside the operating system's temporary root. Retain `<persistent-marketplace-directory>`: it is installed state, not temporary extraction. Do not recursively delete an unresolved variable, persistent Marketplace source, user directory, workspace, repository, or Codex configuration root.
 
@@ -214,17 +222,28 @@ codex plugin marketplace list --json
 codex plugin list --json
 ```
 
-Both commands MUST still succeed and report the exact persistent source, selector, and version before installation is reported complete.
+Both commands MUST still succeed and report the exact persistent source, selector, and version. This proves installation, but it does not prove hook activation: enabled plugin hooks are not automatically trusted.
+
+The suggested authorization above permits trust only after the exact installed definitions have been reviewed. Start a fresh interactive Codex process without a prompt, choose **Review hooks** if the startup gate appears, or enter `/hooks`. Review all three entries and require:
+
+- source `Plugin - agent-docs@agent-docs`;
+- event and command pairs `UserPromptSubmit` → `node "$PLUGIN_ROOT/scripts/agent-docs.mjs" hook user-prompt-submit`, `SubagentStart` → `node "$PLUGIN_ROOT/scripts/agent-docs.mjs" hook subagent-start`, and `Stop` → `node "$PLUGIN_ROOT/scripts/agent-docs.mjs" hook stop`, using the equivalent `commandWindows` form on Windows;
+- timeouts and context limits matching the already reviewed `hooks/hooks.json` in the verified release.
+
+Persist trust through that review UI only after every definition matches. Never edit `hooks.state` by hand, and never use `--dangerously-bypass-hook-trust` as an installation or verification shortcut. Trust is bound to the exact hook-definition hash, so a later change MUST return to review rather than inherit trust silently.
+
+Return to `/hooks` and require `Installed 1 / Active 1 / Review 0` for each of `UserPromptSubmit`, `SubagentStart`, and `Stop`, then exit without submitting a model prompt. If an interactive review is unavailable, or any entry differs, STOP: report **installed, hook activation pending** and give the user the exact `/hooks` action. Do not claim that Agent Docs is operational.
 
 Report a compact result containing:
 
 - resolved and authorized Codex configuration target;
 - release tag, archive digest, checksum result, and constrained attestation result;
 - persistent Marketplace source, Marketplace/plugin name, and installed version from post-cleanup JSON readback;
+- `/hooks` activation status for all three reviewed definitions, or the explicit `installed, hook activation pending` state;
 - whether the run installed, found an identical existing installation, or rolled back;
 - confirmation that no login, model or AI inference API call, credential access, or unrelated configuration change occurred.
 
-Tell the user to open a **fresh Codex task** in an eligible top-level Git worktree. Do not open an interactive task automatically: that could trigger login or model activity. Hooks loaded by an already-running task do not change retroactively.
+Tell the user to open a **fresh Codex task** in an eligible top-level Git worktree after activation. The first prompt should create a pending Turn Receipt; a non-material probe must resolve it as `not-material`, while material work must create a Work Session and close it. Do not submit that prompt automatically because it would make a model or AI inference API call. Hooks loaded by an already-running task do not change retroactively.
 
 ## Explicit removal
 

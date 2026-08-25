@@ -38,7 +38,7 @@ https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.md
 Copy-paste instruction:
 
 ```text
-Read and follow https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.md in full. Install Agent Docs v0.2.0. You are authorized to modify only Agent Docs marketplace and plugin state in the persistent Codex configuration root used by my normal user-facing Codex tasks, plus fresh operating-system temporary files. Resolve and report that exact root before writing. Do not treat a `CodexSandbox*` account, an operating-system temporary directory, the current workspace, or the extracted release directory as that target. If you cannot distinguish the persistent user target, or conflicting Agent Docs state already exists, stop and ask. Do not log in, call a model or AI inference API, read credentials, weaken a verification gate, or modify any unrelated configuration.
+Read and follow https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.md in full. Install Agent Docs v0.2.0. You are authorized to modify only Agent Docs marketplace and plugin state in the persistent Codex configuration root used by my normal user-facing Codex tasks, plus fresh operating-system temporary files. Resolve and report that exact root before writing. After showing and matching the exact three Agent Docs hook definitions to the reviewed release, you may persist trust for only those definitions through Codex's `/hooks` review UI. Do not use `--dangerously-bypass-hook-trust`. Do not treat a `CodexSandbox*` account, an operating-system temporary directory, the current workspace, or the extracted release directory as that target. If you cannot distinguish the persistent user target, or conflicting Agent Docs state already exists, stop and ask. Do not log in, call a model or AI inference API, read credentials, weaken a verification gate, or modify any unrelated configuration.
 ```
 
 The Agent runbook pins the immutable Release, rejects sandbox/temporary/workspace targets, verifies SHA-256 and both GitHub artifact attestations, retains a verified versioned Marketplace source, performs post-cleanup JSON readback, and rolls back only state created by that run. It never authorizes changes to unrelated plugins or configuration.
@@ -60,7 +60,7 @@ codex plugin add agent-docs@agent-docs
 codex plugin list --json
 ```
 
-Keep the persistent Marketplace source, delete only disposable download/extraction directories, and repeat both JSON readbacks from fresh CLI processes. Then open a fresh Codex task in an eligible Git repository. The plugin does not modify an existing task's hook set. Full target resolution, copy verification, recovery, and removal instructions are in [INSTALL.md](INSTALL.md).
+Keep the persistent Marketplace source, delete only disposable download/extraction directories, and repeat both JSON readbacks from fresh CLI processes. Then review the three exact definitions through `/hooks`; never substitute `--dangerously-bypass-hook-trust`. Continue only when `UserPromptSubmit`, `SubagentStart`, and `Stop` each show `Installed 1 / Active 1 / Review 0`. Open a fresh Codex task in an eligible Git repository after activation. The plugin does not modify an existing task's hook set. Full target resolution, copy verification, activation, recovery, and removal instructions are in [INSTALL.md](INSTALL.md).
 
 ## Compatibility
 

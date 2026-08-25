@@ -102,6 +102,13 @@ try {
   json(runCodex(["plugin", "add", "agent-docs@agent-docs", "--json"]));
   const installed = runCodex(["plugin", "list", "--json"]);
   if (!installed.includes('"agent-docs"')) throw new Error("Installed plugin was not listed.");
+  const installedConfig = await readFile(path.join(isolatedCodexHome, "config.toml"), "utf8");
+  if (
+    installedConfig.includes('hooks.state."agent-docs@agent-docs:hooks/hooks.json:') ||
+    installedConfig.includes("trusted_hash")
+  ) {
+    throw new Error("Plugin installation unexpectedly persisted hook trust without review.");
+  }
 
   await mkdir(smokeRepo, { recursive: true });
   run("git", ["init", "--initial-branch=main", "--quiet"], { cwd: smokeRepo });
@@ -282,7 +289,7 @@ try {
   if (remaining.includes('"agent-docs"'))
     throw new Error("Plugin remained after isolated removal.");
   console.log(
-    "Persistent Marketplace install, disposable cleanup, fresh-process readback, hook workflow, Stop repair, and isolated removal smoke test passed.",
+    "Persistent Marketplace install, untrusted-by-default state, disposable cleanup, fresh-process readback, direct hook workflow, Stop repair, and isolated removal smoke test passed.",
   );
 } finally {
   await rm(temporary, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });

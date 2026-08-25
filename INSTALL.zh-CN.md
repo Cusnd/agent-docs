@@ -41,7 +41,11 @@ codex plugin add agent-docs@agent-docs
 codex plugin list --json
 ```
 
-必须保留持久 Marketplace 目录。只删除可丢弃的下载与解压目录，然后用全新的 Codex CLI 进程再次运行两项 JSON list 命令。只有回读仍显示 Marketplace `agent-docs`、来源 `<CODEX_HOME>/marketplaces/agent-docs-v0.2.0`、selector `agent-docs@agent-docs` 与版本 `0.2.0` 后，才在顶层 Git worktree 中打开全新的 Codex 任务。第一次实质提示应由 `UserPromptSubmit` 报告 pending Turn Receipt。
+必须保留持久 Marketplace 目录。只删除可丢弃的下载与解压目录，然后用全新的 Codex CLI 进程再次运行两项 JSON list 命令。这些回读只能证明安装完成，不能证明 hooks 已激活。
+
+已启用插件的 hooks 不会自动获得信任。启动一个不带 prompt 的全新 Codex 交互进程，在启动时选择 **Review hooks**，或输入 `/hooks`；把 `UserPromptSubmit`、`SubagentStart` 和 `Stop` 的来源、命令、timeout 与 context limit 同已审查的 `hooks/hooks.json` 比较。只能通过该界面信任完全匹配的定义。不得手工编辑 `hooks.state`，也不得用 `--dangerously-bypass-hook-trust` 绕过持久安装信任。`/hooks` 总览必须让三个 event 都显示 `Installed 1 / Active 1 / Review 0`；否则插件只是已安装，并未可运行。
+
+只有 JSON 回读仍显示 Marketplace `agent-docs`、来源 `<CODEX_HOME>/marketplaces/agent-docs-v0.2.0`、selector `agent-docs@agent-docs`、版本 `0.2.0`，而且 `/hooks` 显示三个 hooks 均已激活后，才在顶层 Git worktree 中打开全新的 Codex 任务。第一次实质提示应由 `UserPromptSubmit` 报告 pending Turn Receipt。Agent 还必须能写入 `docs/agent/` 与该 worktree 的 `.git/agent-docs/`；若 sandbox 以 `EPERM` 等错误拒绝，只应授予这些路径所需的最小权限或审批，不能用 hook-trust bypass 代替。
 
 实验时只给 Codex 子进程设置一个空的一次性 `CODEX_HOME`。仓库的 `npm run release:smoke` 会自动完成隔离，绝不会修改调用者真实的插件配置。
 

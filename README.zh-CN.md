@@ -38,7 +38,7 @@ https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.zh-CN.md
 可直接复制的指令：
 
 ```text
-完整阅读并严格执行 https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.zh-CN.md，安装 Agent Docs v0.2.0。我授权你只修改我的正常用户侧 Codex 任务所使用的持久 Codex 配置根目录中的 Agent Docs Marketplace 与插件状态，以及新建的操作系统临时文件。写入前必须解析并报告这个准确根目录。不得把 `CodexSandbox*` 账户、操作系统临时目录、当前 workspace 或 Release 解压目录当作该目标。若无法区分持久用户目标，或已存在冲突的 Agent Docs 状态，停止并询问。不得登录、调用模型或 AI 推理 API、读取凭据、降低任何验证门槛或修改无关配置。
+完整阅读并严格执行 https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.zh-CN.md，安装 Agent Docs v0.2.0。我授权你只修改我的正常用户侧 Codex 任务所使用的持久 Codex 配置根目录中的 Agent Docs Marketplace 与插件状态，以及新建的操作系统临时文件。写入前必须解析并报告这个准确根目录。向我展示三个 Agent Docs hook 的准确定义并确认它们与已审查 Release 完全一致后，你可以仅通过 Codex 的 `/hooks` 审查界面持久信任这些定义。不得使用 `--dangerously-bypass-hook-trust`。不得把 `CodexSandbox*` 账户、操作系统临时目录、当前 workspace 或 Release 解压目录当作该目标。若无法区分持久用户目标，或已存在冲突的 Agent Docs 状态，停止并询问。不得登录、调用模型或 AI 推理 API、读取凭据、降低任何验证门槛或修改无关配置。
 ```
 
 Agent runbook 会固定不可变 Release、拒绝 sandbox/临时/workspace 目标、验证 SHA-256 和两份 GitHub artifact attestation、保留已验证的版本化 Marketplace 源、在清理临时目录后执行 JSON 回读，并且只回滚本轮创建的状态。它不授权修改无关插件或配置。
@@ -60,7 +60,7 @@ codex plugin add agent-docs@agent-docs
 codex plugin list --json
 ```
 
-保留持久 Marketplace 源，只删除可丢弃的下载/解压目录，并使用全新 CLI 进程重复两项 JSON 回读。之后再在合格 Git 仓库中打开一个全新的 Codex 任务；插件不会改变已经运行任务的 hook 集合。完整的目标解析、复制校验、恢复与卸载步骤见 [INSTALL.zh-CN.md](INSTALL.zh-CN.md)。
+保留持久 Marketplace 源，只删除可丢弃的下载/解压目录，并使用全新 CLI 进程重复两项 JSON 回读。然后通过 `/hooks` 审查三个准确定义，绝不能用 `--dangerously-bypass-hook-trust` 代替。只有 `UserPromptSubmit`、`SubagentStart` 和 `Stop` 各自显示 `Installed 1 / Active 1 / Review 0` 后才继续，并在激活后于合格 Git 仓库中打开一个全新的 Codex 任务。插件不会改变已经运行任务的 hook 集合。完整的目标解析、复制校验、激活、恢复与卸载步骤见 [INSTALL.zh-CN.md](INSTALL.zh-CN.md)。
 
 ## 兼容性
 

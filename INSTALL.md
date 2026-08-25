@@ -41,7 +41,11 @@ codex plugin add agent-docs@agent-docs
 codex plugin list --json
 ```
 
-Keep the persistent Marketplace directory. Delete only disposable download and extraction directories, then run both JSON list commands again from fresh Codex CLI processes. Start a fresh Codex task in a top-level Git worktree only after those readbacks still show Marketplace `agent-docs`, source `<CODEX_HOME>/marketplaces/agent-docs-v0.2.0`, selector `agent-docs@agent-docs`, and version `0.2.0`. On the first material prompt, `UserPromptSubmit` should report a pending Turn Receipt.
+Keep the persistent Marketplace directory. Delete only disposable download and extraction directories, then run both JSON list commands again from fresh Codex CLI processes. These readbacks prove installation, not hook activation.
+
+Enabled plugin hooks are not automatically trusted. Start a fresh interactive Codex process without a prompt, choose **Review hooks** at startup or enter `/hooks`, and compare the source, commands, timeouts, and context limits for `UserPromptSubmit`, `SubagentStart`, and `Stop` with the reviewed `hooks/hooks.json`. Trust only exact matches through that UI. Do not edit `hooks.state` manually and do not use `--dangerously-bypass-hook-trust` as a persistent-install shortcut. The `/hooks` overview must show `Installed 1 / Active 1 / Review 0` for all three events; otherwise the plugin is installed but not operational.
+
+Start a fresh Codex task in a top-level Git worktree only after the JSON readbacks still show Marketplace `agent-docs`, source `<CODEX_HOME>/marketplaces/agent-docs-v0.2.0`, selector `agent-docs@agent-docs`, version `0.2.0`, and `/hooks` shows all three hooks active. On the first material prompt, `UserPromptSubmit` should report a pending Turn Receipt. The Agent must also have permission to write `docs/agent/` and the worktree's `.git/agent-docs/`; a sandbox denial such as `EPERM` requires the narrow permission or approval needed for those paths, not a hook-trust bypass.
 
 For experiments, set `CODEX_HOME` only on the Codex subprocess to an empty disposable directory. The repository's `npm run release:smoke` script automates this isolation and never changes the invoking user's real plugin configuration.
 

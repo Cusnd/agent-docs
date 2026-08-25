@@ -70,6 +70,7 @@ export async function createRepo(name) {
   run("git", ["init", "--quiet", directory]);
   run("git", ["config", "user.email", "agent-docs@example.invalid"], { cwd: directory });
   run("git", ["config", "user.name", "Agent Docs Test"], { cwd: directory });
+  run("git", ["config", "commit.gpgSign", "false"], { cwd: directory });
   await writeFile(path.join(directory, "README.md"), "# Disposable fixture\n", "utf8");
   run("git", ["add", "README.md"], { cwd: directory });
   run("git", ["commit", "--quiet", "-m", "fixture"], { cwd: directory });

@@ -17,7 +17,7 @@ const pairingExclusions = [
 const installContractStart = "<!-- agent-docs:install-contract:start -->";
 const installContractEnd = "<!-- agent-docs:install-contract:end -->";
 const expectedInstallContract = {
-  schema_version: 2,
+  schema_version: 3,
   entrypoint: "https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.md",
   repository: "Cusnd/agent-docs",
   distribution: "github-release-zip",
@@ -59,6 +59,14 @@ const expectedInstallContract = {
     relative_path: "marketplaces/agent-docs-v0.2.0",
     persistent: true,
     remove_with_temporary_files: false,
+  },
+  hook_activation: {
+    trust_required: true,
+    review_command: "/hooks",
+    auto_trust: false,
+    persistent_bypass_allowed: false,
+    expected_events: ["UserPromptSubmit", "SubagentStart", "Stop"],
+    expected_status: "Installed 1 / Active 1 / Review 0",
   },
   safety: {
     require_target_authorization: true,
@@ -210,6 +218,11 @@ const requiredLifecycleTokens = [
   "marketplaces/agent-docs-v0.2.0",
   "codex plugin marketplace add <persistent-marketplace-directory>",
 ];
+const requiredHookActivationTokens = [
+  "/hooks",
+  "--dangerously-bypass-hook-trust",
+  "Installed 1 / Active 1 / Review 0",
+];
 const forbiddenDisposableSourceTokens = [
   "codex plugin marketplace add <extracted-top-level-directory>",
   "codex plugin marketplace add <extracted-marketplace-directory>",
@@ -221,6 +234,9 @@ for (const file of installLifecycleFiles) {
   if (typeof content !== "string") continue;
   for (const token of requiredLifecycleTokens) {
     if (!content.includes(token)) errors.push(`${file}: missing install lifecycle token ${token}`);
+  }
+  for (const token of requiredHookActivationTokens) {
+    if (!content.includes(token)) errors.push(`${file}: missing hook activation token ${token}`);
   }
   for (const token of forbiddenDisposableSourceTokens) {
     if (content.includes(token)) errors.push(`${file}: registers a disposable Marketplace source`);

@@ -4,7 +4,11 @@
 
 ## Hook is inactive
 
-Check that this is a writable top-level Git worktree, not a bare repository, submodule, operating-system temporary directory, or repository with `.agent-docs-disable`. Confirm `node --version`, `codex --version`, and `codex plugin list --json`. A newly installed plugin requires a fresh Codex task.
+First enter `/hooks` in a fresh Codex process. For `UserPromptSubmit`, `SubagentStart`, and `Stop`, `Installed 1 / Active 0 / Review 1` means the plugin is present but its exact hook definitions have not been trusted. Review the source and commands against the verified release, trust exact matches through that UI, and require `Installed 1 / Active 1 / Review 0`. Do not edit `hooks.state` manually or use `--dangerously-bypass-hook-trust` as a persistent fix; changed definitions must be reviewed again.
+
+If all three hooks are active, check that this is a writable top-level Git worktree, not a bare repository, submodule, operating-system temporary directory, or repository with `.agent-docs-disable`. Confirm `node --version`, `codex --version`, and `codex plugin list --json`. A newly installed or newly trusted plugin requires a fresh Codex task because an existing task does not reload its hook set.
+
+If `UserPromptSubmit` creates a Receipt but an Agent command fails with `EPERM` or `EACCES` under a sandbox, grant or approve only the permission needed to write `docs/agent/` and that worktree's `.git/agent-docs/`. Hook trust and filesystem permission are separate gates.
 
 ## Marketplace listing fails after installation
 
