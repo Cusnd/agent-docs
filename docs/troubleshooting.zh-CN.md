@@ -4,7 +4,17 @@
 
 ## Hook 未运行
 
-确认当前路径是可写的顶层 Git worktree，而不是 bare repository、submodule、操作系统临时目录或包含 `.agent-docs-disable` 的仓库。检查 `node --version`、`codex --version` 和 `codex plugin list --json`。新安装插件需要打开全新 Codex 任务。
+先在全新的 Codex 进程中输入 `/hooks`。如果 `UserPromptSubmit`、`SubagentStart` 和 `Stop` 显示 `Installed 1 / Active 0 / Review 1`，说明插件已经存在，但这些准确定义尚未获得信任。把来源与命令同已验证 Release 比较，只通过该界面信任完全匹配的定义，并要求三项均显示 `Installed 1 / Active 1 / Review 0`。不得手工编辑 `hooks.state`，也不得用 `--dangerously-bypass-hook-trust` 作为持久修复；定义变化后必须重新审查。
+
+如果三个 hooks 都已激活，再确认当前路径是可写的顶层 Git worktree，而不是 bare repository、submodule、操作系统临时目录或包含 `.agent-docs-disable` 的仓库。检查 `node --version`、`codex --version` 和 `codex plugin list --json`。新安装或新信任的插件需要打开全新 Codex 任务，因为已有任务不会重新加载 hook 集合。
+
+如果 `UserPromptSubmit` 已创建 Receipt，但 Agent 命令在 sandbox 中以 `EPERM` 或 `EACCES` 失败，只应授予或审批写入 `docs/agent/` 与该 worktree 的 `.git/agent-docs/` 所需权限。hook 信任与文件系统权限是两个独立门槛。
+
+## 安装后 Marketplace 列表失败
+
+若 `codex plugin marketplace list --json` 或 `codex plugin list --json` 报告 Marketplace manifest 缺失，检查已配置的 Agent Docs 来源路径。本地 Marketplace 会被原地使用：删除源目录后，即使已安装插件 cache 仍存在，后续回读也会失败。位于操作系统临时目录、任务 workspace、仓库 checkout 或已经消失的解压目录下的路径，都不是有效的持久安装。
+
+若已配置的 `CODEX_HOME` 属于 Windows `CodexSandbox*` 账户，安装还错误地写入了受限执行身份，而不是正常用户侧 Codex 任务使用的持久配置。不得复制整个 sandbox 配置，也不要重建已经丢失的临时目录。先解析 host 用户的持久目标，取得明确的修复/迁移授权，再严格执行[交给 Agent 的安装契约](../AGENT_INSTALL.zh-CN.md)，把已验证来源安装到 `<CODEX_HOME>/marketplaces/agent-docs-v0.2.0`。不得隐式移除已有冲突状态。
 
 ## `REPOSITORY_PROBE_FAILED`
 

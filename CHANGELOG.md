@@ -11,6 +11,10 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 - Bilingual, one-link Agent installation contracts with pinned Release identities, checksum and attestation gates, trust review, target authorization, transactional rollback, JSON readback, and no-login/no-model boundaries.
 - Repository checks that keep both contract objects identical and require every public installation entrypoint and safety-critical command.
 
+### Fixed
+
+- Existing healthy installations now continue to hook review and activation instead of reporting idempotent success while plugin hooks remain untrusted; the bilingual contract checker locks this control-flow requirement.
+
 ## [0.2.0] - 2026-08-18
 
 ### Added

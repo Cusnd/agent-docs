@@ -17,7 +17,7 @@ const pairingExclusions = [
 const installContractStart = "<!-- agent-docs:install-contract:start -->";
 const installContractEnd = "<!-- agent-docs:install-contract:end -->";
 const expectedInstallContract = {
-  schema_version: 1,
+  schema_version: 3,
   entrypoint: "https://raw.githubusercontent.com/Cusnd/agent-docs/main/AGENT_INSTALL.md",
   repository: "Cusnd/agent-docs",
   distribution: "github-release-zip",
@@ -50,6 +50,24 @@ const expectedInstallContract = {
   verified_codex_cli: "0.147.0",
   node: "^22.0.0 || ^24.0.0 || ^26.0.0",
   verified_operating_systems: ["Windows", "Linux", "macOS"],
+  target: {
+    kind: "persistent-user-codex-home",
+    reject_sandbox_identity: true,
+    reject_temporary_or_workspace_path: true,
+  },
+  marketplace_storage: {
+    relative_path: "marketplaces/agent-docs-v0.2.0",
+    persistent: true,
+    remove_with_temporary_files: false,
+  },
+  hook_activation: {
+    trust_required: true,
+    review_command: "/hooks",
+    auto_trust: false,
+    persistent_bypass_allowed: false,
+    expected_events: ["UserPromptSubmit", "SubagentStart", "Stop"],
+    expected_status: "Installed 1 / Active 1 / Review 0",
+  },
   safety: {
     require_target_authorization: true,
     allow_login: false,
@@ -185,6 +203,84 @@ for (const file of installContractFiles) {
   if (typeof content !== "string") continue;
   for (const token of requiredRunbookTokens) {
     if (!content.includes(token)) errors.push(`${file}: missing required runbook token ${token}`);
+  }
+}
+
+const installLifecycleFiles = [
+  "AGENT_INSTALL.md",
+  "AGENT_INSTALL.zh-CN.md",
+  "INSTALL.md",
+  "INSTALL.zh-CN.md",
+  "README.md",
+  "README.zh-CN.md",
+];
+const requiredLifecycleTokens = [
+  "marketplaces/agent-docs-v0.2.0",
+  "codex plugin marketplace add <persistent-marketplace-directory>",
+];
+const requiredHookActivationTokens = [
+  "/hooks",
+  "--dangerously-bypass-hook-trust",
+  "Installed 1 / Active 1 / Review 0",
+];
+const idempotentActivationContracts = [
+  {
+    file: "AGENT_INSTALL.md",
+    installationHeading: "## Installation procedure",
+    requiredBeforeInstallation: [
+      "continue directly to section 6 for hook review and activation",
+      "report idempotent success only after all three hooks show `Installed 1 / Active 1 / Review 0`",
+    ],
+  },
+  {
+    file: "AGENT_INSTALL.zh-CN.md",
+    installationHeading: "## 安装流程",
+    requiredBeforeInstallation: [
+      "直接继续到第 6 节进行 hook 审查与激活",
+      "只有在三个 hooks 都显示 `Installed 1 / Active 1 / Review 0` 后才能报告幂等成功",
+    ],
+  },
+];
+const forbiddenDisposableSourceTokens = [
+  "codex plugin marketplace add <extracted-top-level-directory>",
+  "codex plugin marketplace add <extracted-marketplace-directory>",
+  "codex plugin marketplace add <解压后的顶层目录>",
+  "codex plugin marketplace add <解压后的-marketplace-目录>",
+];
+for (const file of installLifecycleFiles) {
+  const content = markdownContents.get(file);
+  if (typeof content !== "string") continue;
+  for (const token of requiredLifecycleTokens) {
+    if (!content.includes(token)) errors.push(`${file}: missing install lifecycle token ${token}`);
+  }
+  for (const token of requiredHookActivationTokens) {
+    if (!content.includes(token)) errors.push(`${file}: missing hook activation token ${token}`);
+  }
+  for (const token of forbiddenDisposableSourceTokens) {
+    if (content.includes(token)) errors.push(`${file}: registers a disposable Marketplace source`);
+  }
+}
+for (const contract of idempotentActivationContracts) {
+  const content = markdownContents.get(contract.file);
+  if (typeof content !== "string") continue;
+  const installationHeadingIndex = content.indexOf(contract.installationHeading);
+  if (installationHeadingIndex === -1) {
+    errors.push(`${contract.file}: missing installation heading ${contract.installationHeading}`);
+    continue;
+  }
+  const preInstallation = content.slice(0, installationHeadingIndex);
+  for (const clause of contract.requiredBeforeInstallation) {
+    if (!preInstallation.includes(clause)) {
+      errors.push(
+        `${contract.file}: missing pre-installation idempotent activation clause ${clause}`,
+      );
+    }
+  }
+}
+for (const file of ["AGENT_INSTALL.md", "AGENT_INSTALL.zh-CN.md", "README.md", "README.zh-CN.md"]) {
+  const content = markdownContents.get(file);
+  if (typeof content === "string" && !content.includes("CodexSandbox")) {
+    errors.push(`${file}: missing Windows sandbox-target guard`);
   }
 }
 
